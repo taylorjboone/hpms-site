@@ -3,17 +3,10 @@
   <head>
     <title>HPMS/Traffic Units</title>
       <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='global.css')}}">
+      {% import 'macros.html' as macros %}
   </head>
 <body style="background-color:#121212;">
-    <!-- Nav Bar -->
-    <div class='menu' id='Menu' style='font-weight: 700'>
-      <a href="{{ '/' }}" style='color: #ffe600; padding: 0 10px 0 0;'>Home</a>
-      <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>RPT Converter</a>
-      <a href="{{ url_for('landslide')}}" style='color: #ffe600; padding: 0 10px'>Landslide Risk</a>
-      <a href="{{ url_for('traffic_dashboard')}}" style='color: #ffe600; padding: 0 10px'>Traffic Dashboard</a>
-      </div>
-
-
+  {{ macros.navbar() }}
   <script>
 function getscore(){
     var loss = parseInt(document.getElementById('loss').value);
