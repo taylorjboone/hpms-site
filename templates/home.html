@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <title>HPMS/Traffic Units</title>
+      <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='global.css')}}">
+  </head>
+  <body style="text-align:center;    text-align: -webkit-center;">
+    <!-- Nav Bar -->
+    <div class='menu' id='Menu' style='font-weight: 700; border: 2px solid rgb(0, 138, 184);'>
+        <a href="{{ '/' }}" style='color: #ffe600; padding: 0 10px 0 0;'>Home</a>
+        <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>RPT Converter</a>
+        <a href="{{ url_for('landslide')}}" style='color: #ffe600; padding: 0 10px'>Landslide Risk</a>
+        <a href="{{ url_for('traffic_dashboard')}}" style='color: #ffe600; padding: 0 10px'>Traffic Dashboard</a>
+        </div>
+    <div class="flex-container">
+        <div class="flex-child">
+            <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>
+                <img src="{{ url_for('static', filename='image/guy.png')}}" style='max-width: 50%; height: auto;' alt='RPT Converter'>
+                <p>RPT Converter</p>
+            </a>
+        </div>
+        <div class="flex-child">
+            <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>
+                <img src="{{ url_for('static', filename='image/matt.png')}}" style='max-width: 50%; height: auto;' alt='HPMS Dashboard'>
+                <p>HPMS Dashboard</p>
+            </a>
+        </div>
+        <div class="flex-child">
+            <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>
+                <img src="{{ url_for('static', filename='image/jeremy.png')}}" style='max-width: 50%; height: auto;' alt='Landslide Dashboard'>
+                <p>Landslide Dashboard</p>
+            </a>
+        </div>
+    </div>
+  </body>
+</html>

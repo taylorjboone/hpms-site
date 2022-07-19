@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HPMS/Traffic Units</title>
+      <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='global.css')}}">
+  </head>
+<body style="background-color:#121212;">
+    <!-- Nav Bar -->
+    <div class='menu' id='Menu' style='font-weight: 700'>
+      <a href="{{ '/' }}" style='color: #ffe600; padding: 0 10px 0 0;'>Home</a>
+      <a href="{{ url_for('rpt_convert')}}" style='color: #ffe600; padding: 0 10px'>RPT Converter</a>
+      <a href="{{ url_for('landslide')}}" style='color: #ffe600; padding: 0 10px'>Landslide Risk</a>
+      <a href="{{ url_for('traffic_dashboard')}}" style='color: #ffe600; padding: 0 10px'>Traffic Dashboard</a>
+      </div>
+
+
+  <script>
+function getscore(){
+    var loss = parseInt(document.getElementById('loss').value);
+    var adt = parseInt(document.getElementById('adt').value);
+    var school = parseInt(document.getElementById('school').value);
+    var impact = parseInt(document.getElementById('impact').value);
+    var damage = parseInt(document.getElementById('damage').value);
+    var speed = parseInt(document.getElementById('speed').value);
+    var detour = parseInt(document.getElementById('detour').value);
+    var alength = parseInt(document.getElementById('alength').value);
+    var scarp = parseInt(document.getElementById('scarp').value);
+    var annual = parseInt(document.getElementById('annual').value);
+    console.log(loss*5,adt*4,school*3,impact*3,damage*3,speed*3,detour*3,alength*6,scarp*2,annual*2)
+    if(loss>0 && adt>0 && school>0 && impact>0 && damage>0 && speed>0 && detour>0 && alength>0 && scarp>0 && annual>0){
+      var score = loss*5+adt*4+school*3+impact*3+damage*3+speed*3+detour*3+alength*6+scarp*2+annual*2
+      var scoreprofile;
+      if(score<74){
+      scoreprofile = "Low Risk"
+      } else if(score>=74 && score<119){
+        scoreprofile = "Moderate Risk"
+      } else if(score>=119 && score<164){
+        scoreprofile = "High Risk"
+      } else if(score>=164){
+        scoreprofile = "Very High Risk"
+      }
+      console.log(scoreprofile,"scoreprofile")
+      var finalscore = document.getElementById("scoreprofile")
+      finalscore.innerText=scoreprofile
+      finalscore.style.visibility="visible"
+    }
+}
+  </script>
+
+<h1 for="title" style="color:white; font-size:x-large; font-family:Arial;">Landslide Risk Calculator</h1>
+
+  <form action="/action_page.php">
+    <h1 for="loss" style="color:white; font-size:medium; font-family:Arial;">Lane Closure/Road Loss:</h1>
+    <select style=width:600px onchange="getscore()" name="loss" id="loss">
+      <option value="0" selected disabled hidden></option>
+      <option value="1">None</option>
+      <option value="3">Potential for shoulder or lane loss</option>
+      <option value="5">Complete road closure expected</option>
+      <option value="7">Existing closure or road damage</option>
+    </select>
+    <br><br>
+  </form>
+
+
+  <form action="/action_page.php">
+    <h1 for="adt" style="color:white; font-size:medium; font-family:Arial;">Average Daily Traffic (Vehicles/day):</h1>
+    <select style=width:600px onchange="getscore()" name="adt" id="adt">
+      <option value="0" selected disabled hidden></option>
+      <option value="1">&le;2,000</option>
+      <option value="3">2,001-5,000</option>
+      <option value="5">5,001-15,000</option>
+      <option value="7">&gt15,000</option>
+    </select>
+    <br><br>
+  </form>
+
+
+  <form action="/action_page.php">
+    <h1 for="school" style="color:white; font-size:medium; font-family:Arial;">School Bus/Emergency Route Distance (Miles):</h1>
+    <select style=width:600px onchange="getscore()" name="school" id="school">
+      <option value="0" selected disabled hidden></option>
+      <option value="1">&le;5</option>
+      <option value="3">6-15</option>
+      <option value="5">16-25</option>
+      <option value="7">&gt25</option>
+      <option value="7">No detour available</option>
+    </select>
+    <br><br>
+  </form>
+
+
+  <form action="/action_page.php">
+    <h1 for="impact" style="color:white; font-size:medium; font-family:Arial;">Impact to Road Structure and Adjacent Features:</h1>
+    <select style=width:600px onchange="getscore()" name="impact" id="impact">
+      <option value="0" selected disabled hidden></option>
+      <option value="1">Low potential to affect roadway and low potential to impact adjacent features</option>
+      <option value="3">Low potential to affect roadway and moderate potential to impact adjacent features</option>
+      <option value="5">Moderate potential to affect roadway and high potential to impact adjacent features</option>
+      <option value="7">High potential to affect roadway and high potential to impact adjacent features</option>
+    </select>
+    <br><br>
+  </form>
+
+
+  <form action="/action_page.php">
+    <h1 for="damage" style="color:white; font-size:medium; font-family:Arial;">Expected Damage to Structures (i.e. Building, Utilities, Railroad, and other Roads/Structure):</h1>
+    <select style=width:600px onchange="getscore()" name="damage" id="damage">
+      <option value="0" selected disabled hidden></option>
+      <option value="1">Low potential to affect adjacent structures</option>
+      <option value="3">Moderate potential to affect adjacent structures</option>
+      <option value="5">High potential to affect adjacent structures</option>
+      <option value="7">Very high potential to affect adjacent structures</option>
+    </select>
+    <br><br>
+  </form>
+
+
+<form action="/action_page.php">
+  <h1 for="speed" style="color:white; font-size:medium; font-family:Arial;">Posted Traffic Speed (Miles/Hour):</h1>
+  <select style=width:600px onchange="getscore()" name="speed" id="speed">
+    <option value="0" selected disabled hidden></option>
+    <option value="1">&le;15</option>
+    <option value="3">16-35</option>
+    <option value="5">36-55</option>
+    <option value="7">&gt55</option>
+  </select>
+  <br><br>
+</form>
+
+
+<form action="/action_page.php">
+  <h1 for="detour" style="color:white; font-size:medium; font-family:Arial;">Detour Route Distance (Miles):</h1>
+  <select style=width:600px onchange="getscore()" name="detour" id="detour">
+    <option value="0" selected disabled hidden></option>
+    <option value="1">&le;10</option>
+    <option value="3">11-20</option>
+    <option value="5">21-30</option>
+    <option value="7">&gt30</option>
+    <option value="7">No detour available</option>
+  </select>
+  <br><br>
+</form>
+
+
+<form action="/action_page.php">
+  <h1 for="alength" style="color:white; font-size:medium; font-family:Arial;">Length of Landslide (Nearest Whole Foot):</h1>
+  <select style=width:600px onchange="getscore()" name="alength" id="alength">
+    <option value="0" selected disabled hidden></option>
+    <option value="1">&le;16</option>
+    <option value="3">17-49</option>
+    <option value="5">50-82</option>
+    <option value="7">&gt82</option>
+  </select>
+  <br><br>
+</form>
+
+
+<form action="/action_page.php">
+  <h1 for="scarp" style="color:white; font-size:medium; font-family:Arial;">Vertical and Horizontal Displacement of Scarp (Inches):</h1>
+  <select style=width:600px onchange="getscore()" name="scarp" id="scarp">
+    <option value="0" selected disabled hidden></option>
+    <option value="1">&le;5</option>
+    <option value="3">6-20</option>
+    <option value="5">21-35</option>
+    <option value="7">&gt35</option>
+  </select>
+  <br><br>
+</form>
+
+
+<form action="/action_page.php">
+  <h1 for="annual" style="color:white; font-size:medium; font-family:Arial;">Annual Maintenance Cost (Thousand Dollars per Landslide):</h1>
+  <select style=width:600px onchange="getscore()" name="annual" id="annual">
+    <option value="0" selected disabled hidden></option>
+    <option value="1">&le;10</option>
+    <option value="3">11-20</option>
+    <option value="5">21-30</option>
+    <option value="7">&gt30</option>
+  </select>
+  <br><br>
+</form>
+<h1 for="risk estimate" style="color:white; font-size:x-large; font-family:Arial;">Risk Estimate:</h1>
+<h1 id="scoreprofile" style="color:white; font-size:large; border: 2px solid #ffffff; width:fit-content; padding: 0.5%; border-radius: 10px; visibility: hidden; font-family:Arial;"></h1>
+
+</body>
+</html>
