@@ -4,7 +4,6 @@ from flask import Flask,current_app,render_template,flash
 import json
 from werkzeug.utils import secure_filename
 from io import StringIO
-import pandas as pd
 
 from wow_updated import rpt_converter
 
@@ -20,8 +19,7 @@ def allowed_file(filename):
 
 @app.route('/chart')
 def chart():
-    df = pd.read_csv('static/DataItem52_Cracking_Percent_non_interstate_NHS.csv', sep='|')
-    return render_template('charts/chart.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
+    return render_template('charts/chart.html')
 
 @app.route('/')
 def index():
@@ -49,6 +47,7 @@ def convert_file():
 @app.route('/traffic_dashboard')
 def traffic_dashboard():
     return render_template('traffic_dashboard.html')
+
 
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
