@@ -27,13 +27,13 @@ def metro_count_convert(in_filename,out_filename='default.xlsx'):
 
 def centurion_count_convert(in_filename,out_filename='default.xlsx'):
     z=pd.read_csv(in_filename,skiprows=22,header=None)
-    z[['-a','a']]=z[0].str.split(';',expand=True)
-    z[['b']]=z[1]
-    z[['c','d']]=z[2].str.split(';',expand=True)
-    z[['e']]=z[3]
-    z[['f']]=z[4]
-    z[['g']]=z[5]
-    z[['h','i','j','k','l','m','n','o','p']]=z[6].str.split(';',expand=True)
+    z[['-a','Date']]=z[0].str.split(';',expand=True)
+    z[['Time']]=z[1]
+    z[['Channel','Speed']]=z[2].str.split(';',expand=True)
+    z[['Naxles']]=z[3]
+    z[['Length']]=z[4]
+    z[['Vclass']]=z[5]
+    z[['Vclass1','i','Axle Length 1','Axle Length 2','Axle Length 3','Axle Length 4','Axle Length 5','Axle length 6','Axle Length 7']]=z[6].str.split(';',expand=True)
     z=z.drop(['-a',0,1,2,3,4,5,6],axis=1)
     return z.to_excel(out_filename,index=False)
 

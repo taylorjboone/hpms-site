@@ -53,3 +53,7 @@ def traffic_dashboard():
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
+
+@app.route('geo_counts_converter')
+def geo_counts_conversion():
+    return render_template('geo_count.html')
