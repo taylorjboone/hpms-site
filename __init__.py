@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from io import StringIO
 import pandas as pd
 
-from wow_updated import rpt_converter
+from rptconverter import rpt_converter
 
 app = Flask(__name__)
 
@@ -33,18 +33,17 @@ def landslide():
 
 @app.route('/rpt_convert')
 def rpt_convert():
-    # return current_app.send_static_file('serve_this.html')
-    return render_template('serve_this.html')
+    return render_template('rpt_converter.html')
 
 @app.route('/rpt_convert/converter',methods=['POST'])
 def convert_file():
     print(request.files)
     f = request.files['filename']
     # f.save(secure_filename('./static/a.txt'))
-    f.save('C:/Users/E025205/Documents/Python_Scripts/hpms-site/static/a.txt')
-    rpt_converter('C:/Users/E025205/Documents/Python_Scripts/hpms-site/static/a.txt','C:/Users/E025205/Documents/Python_Scripts/hpms-site/static/out.xlsx')
+    f.save('static/a.txt')
+    rpt_converter('static/a.txt','static/out.xlsx')
     # return redirect('hpms-site/out.xlsx')
-    return send_file('C://Users/e025205/Documents/Python_Projects/hpms-site/static/out.xlsx')
+    return send_file('static/out.xlsx')
 
 @app.route('/traffic_dashboard')
 def traffic_dashboard():
@@ -54,6 +53,6 @@ def traffic_dashboard():
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
 
-@app.route('geo_counts_converter')
+@app.route('/geo_counts_converter')
 def geo_counts_conversion():
     return render_template('geo_count.html')
