@@ -4,30 +4,30 @@
   <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='global.css')}}">
   {% import 'macros.html' as macros %}
 </head>
-<body style="text-align:center;    text-align: -webkit-center;background-color: #121212;">
+<body style="text-align:center; text-align: -webkit-center;background-color: #121212; height: -webkit-fill-available;">
   {{ macros.navbar() }}
-  <div style="border: solid black 1px;width:max-content;">
-<h2>GeoCount Converter</h2>
-<!-- <img src="logo.png" alt="WVDOT Logo" style="width:100%"> -->
-<img src="{{url_for('static', filename='image/logo.png')}}" alt="WVDOT Logo" style="width:100%">
+  <div style="border: solid black 1px; height: 50%">
+    <h2>GeoCount Converter</h2>
+
+    <img src="{{url_for('static', filename='image/logo.png')}}" alt="WVDOT Logo" style="height:100%;">
 
 
-<h3>Converts GeoCount files to excel files</h3>
-<p>Only GeoCount files are allowed, all other files will be rejected.
-  <br> Please click "Choose File" to submit the file to the converter.
-</p>
-<form id='formfile' action="/geo_counts_converter/convert" method="POST"  enctype = "multipart/form-data">
-  <input type="file" id="myFile" name="filename">
-  <input type="submit">
-</form>
-</div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VS6CSVRZ4P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){window.dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <h3>Converts GeoCount files to excel files</h3>
+    <p>Only GeoCount files are allowed, all other files will be rejected.
+      <br> Please click "Choose File" to submit the file to the converter.
+    </p>
+    <form id='formfile' action="/geo_counts_converter/convert" method="POST"  enctype = "multipart/form-data">
+      <input type="file" id="myFile" name="filename">
+      <input type="submit">
+    </form>
+  </div>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VS6CSVRZ4P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-VS6CSVRZ4P');
-</script>
+    gtag('config', 'G-VS6CSVRZ4P');
+  </script>
 </body>
 </html>
