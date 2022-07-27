@@ -53,6 +53,14 @@ def convert_file():
 def traffic_dashboard():
     return render_template('traffic_dashboard.html')
 
+@app.route('/traffic_dashboard/aadt')
+def aadt_dashboard():
+    return render_template('aadt_dashboard.html')
+
+@app.route('/traffic_dashboard/gas_price')
+def gas_dashboard():
+    return render_template('gas_price.html')
+
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
