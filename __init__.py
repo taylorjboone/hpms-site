@@ -18,22 +18,18 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/')
+def index():
+    return render_template('home.html')
+
 @app.route('/chart')
 def chart():
     df = pd.read_csv('static/DataItem52_Cracking_Percent_non_interstate_NHS.csv', sep='|')
     return render_template('charts/chart.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
-@app.route('/')
-def index():
-    return render_template('home.html')
-
 @app.route('/tools')
 def tools():
     return render_template('tools.html')
-
-@app.route('/landslide_risk')
-def landslide():
-    return render_template('landslide_risk.html')
 
 @app.route('/rpt_convert')
 def rpt_convert():
@@ -48,6 +44,14 @@ def convert_file():
     rpt.rpt_converter('static/a.txt','static/out.xlsx')
     # return redirect('hpms-site/out.xlsx')
     return send_file('static/out.xlsx')
+
+@app.route('/landslide_risk')
+def landslide():
+    return render_template('landslide_risk.html')
+
+@app.route('/geo_counts_converter')
+def geo_counts_conversion():
+    return render_template('geo_count.html')
 
 @app.route('/traffic_dashboard')
 def traffic_dashboard():
@@ -64,7 +68,3 @@ def gas_dashboard():
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
-
-@app.route('/geo_counts_converter')
-def geo_counts_conversion():
-    return render_template('geo_count.html')

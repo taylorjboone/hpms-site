@@ -24,6 +24,7 @@ a:hover, a:active {text-decoration: underline;}
 
 .flex-container {
   display: flex;
+  height: 33%;
 }
 
 .flex-child {
