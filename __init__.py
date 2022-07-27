@@ -68,6 +68,10 @@ def aadt_dashboard():
 def gas_dashboard():
     return render_template('gas_price.html')
 
+@app.route('/traffic_dashboard/tourism')
+def tourism_dashboard():
+    return render_template('tourism.html')
+
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
