@@ -10,7 +10,13 @@ body {
   font-family: Optima, Geneva, Futara, 'Avanta Garde', sans-serif;
   background-color: #121212;
   color: #FFFFFF;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+html {width: 100%; height: 100%; margin: 0; padding: 0}
 
 a:link, a:visited {text-decoration: none;}
 
