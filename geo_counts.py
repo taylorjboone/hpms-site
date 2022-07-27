@@ -60,28 +60,27 @@ def centurion_count_convert(in_filename,out_filename='default.xlsx'):
     print("CENTURION FINISHED\n",z)
     return z.to_excel(out_filename,index=False)
 
+def geo_count_process(x):
+    onlyfiles = [os.path.join(mypath,f) for f in listdir(mypath) if isfile(join(mypath, f)) if f.endswith('.txt')]
+    term1='MetroCount'
+    term2='Centurion-'
+    cent_number=1
+    metro_number=1
+    # onlyfiles =[r'']
 
-onlyfiles = [os.path.join(mypath,f) for f in listdir(mypath) if isfile(join(mypath, f)) if f.endswith('.txt')]
-term1='MetroCount'
-term2='Centurion-'
-cent_number=1
-metro_number=1
-# onlyfiles =[r'']
-
-for a in onlyfiles:
-    # print(a)
-    file=open(a).read().splitlines()
-    is_cent = 'Centurion' in file[3] and 'FV' in file[3]
-    is_metro = 'MetroCount' in file[3] and 'FV' in file[3]
-    if is_cent==True:
-        new_name=r'C:\PythonTest\Voltron\district_chrystal_report_website\hpms-site\centurion_count\centurion_%d.xlsx' % cent_number
-        cent_number+=1
-        centurion_count_convert(a,out_filename=new_name)
-    if is_metro==True:
-        new_name=r'C:\PythonTest\Voltron\district_chrystal_report_website\hpms-site\metro_count\metro_%d.xlsx' % metro_number
-        metro_number+=1
-        metro_count_convert(a,out_filename=new_name)
-
+    for a in onlyfiles:
+        # print(a)
+        file=open(a).read().splitlines()
+        is_cent = 'Centurion' in file[3] and 'FV' in file[3]
+        is_metro = 'MetroCount' in file[3] and 'FV' in file[3]
+        if is_cent==True:
+            # new_name=r'hpms-site\static\geo_count_conversion\%s_%d.xlsx' % a, cent_number
+            # cent_number+=1
+            centurion_count_convert(a,out_filename='static/geo_count_conversion/geo_count_out.xlsx')
+        if is_metro==True:
+            # new_name=r'hpms-site\static\geo_count_conversion\%s_%d.xlsx' % a, metro_number
+            # metro_number+=1
+            metro_count_convert(a,out_filename='static/geo_count_conversion/geo_count_out.xlsx')
     # for line in file:
     #     # line.strip().split('-')
     #     if term1 in line:

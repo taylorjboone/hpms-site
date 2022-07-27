@@ -1,3 +1,4 @@
+from fileinput import filename
 import os
 from flask import request,redirect, url_for,send_from_directory, send_file
 from flask import Flask,current_app,render_template,flash
@@ -7,6 +8,8 @@ from io import StringIO
 import pandas as pd
 
 from . import rptconverter as rpt
+
+from . import geo_counts as gc
 
 app = Flask(__name__)
 
@@ -68,3 +71,11 @@ def gas_dashboard():
 @app.route('/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
+
+
+@app.route('/geo_counts_converter/convert',methods=['POST'])
+def geo_counts_convert():
+    f=request.files['filename']
+    f.save(r'static\geo_count_conversion\b.txt')
+    gc.geo_count_process(r'static\geo_count_conversion\b.txt')
+    return send_file(r'static\geo_count_conversion\geo_count_out.xlsx')
