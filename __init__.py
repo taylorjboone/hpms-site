@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from io import StringIO
 import pandas as pd
 
-from rptconverter import rpt_converter
+from . import rptconverter as rpt
 
 app = Flask(__name__)
 
@@ -25,11 +25,15 @@ def chart():
 
 @app.route('/')
 def index():
-    return render_template('/home.html')
+    return render_template('home.html')
+
+@app.route('/tools')
+def tools():
+    return render_template('tools.html')
 
 @app.route('/landslide_risk')
 def landslide():
-    return render_template('/landslide_risk.html')
+    return render_template('landslide_risk.html')
 
 @app.route('/rpt_convert')
 def rpt_convert():
@@ -41,7 +45,7 @@ def convert_file():
     f = request.files['filename']
     # f.save(secure_filename('./static/a.txt'))
     f.save('static/a.txt')
-    rpt_converter('static/a.txt','static/out.xlsx')
+    rpt.rpt_converter('static/a.txt','static/out.xlsx')
     # return redirect('hpms-site/out.xlsx')
     return send_file('static/out.xlsx')
 
