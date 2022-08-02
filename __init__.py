@@ -43,8 +43,8 @@ def convert_file():
     print(request.files)
     f = request.files['filename']
     # f.save(secure_filename('./static/a.txt'))
-    f.save('static/a.txt')
-    rpt.rpt_converter('static/a.txt','static/out.xlsx')
+    f.save('hpms-site/static/a.txt')
+    rpt.rpt_converter('hpms-site/static/a.txt','hpms-site/static/out.xlsx')
     # return redirect('hpms-site/out.xlsx')
     return send_file('static/out.xlsx')
 
