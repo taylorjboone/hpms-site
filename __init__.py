@@ -1,5 +1,6 @@
 from fileinput import filename
 import os
+import sys
 from os import listdir
 from os.path import isfile, join
 # from flask import request,redirect, url_for,send_from_directory, send_file
@@ -11,11 +12,18 @@ import pandas as pd
 from zipfile import ZipFile
 from glob import glob
 
-from . import rptconverter as rpt
+# cwd = os.getcwd()
+# sys.path.insert(0, cwd + '/services')
 
-from . import geo_counts as gc
+# from services.pbiembedservice import PbiEmbedService
+from . import utils, rptconverter as rpt, geo_counts as gc, config
+
+from .services import pbiembedservice
 
 app = Flask(__name__)
+
+# Load configuration
+app.config.from_object('hpms-site.config.BaseConfig')
 
 ALLOWED_EXTENSIONS = ['RPT']
 
@@ -114,3 +122,28 @@ def geo_counts_convert():
 #     uploaded_files = Flask.request.files.getlist("file[]")
 #     print(uploaded_files)
 #     return ""
+
+
+@app.route('/getembedinfo', methods=['GET'])
+def get_embed_info():
+    '''Returns report embed configuration'''
+
+    config_result = utils.Utils.check_config(app)
+    if config_result is not None:
+        return json.dumps({'errorMsg': config_result}), 500
+
+    try:
+        embed_info = pbiembedservice.PbiEmbedService().get_embed_params_for_single_report(app.config['WORKSPACE_ID'], app.config['REPORT_ID'])
+        return embed_info
+    except Exception as ex:
+        return json.dumps({'errorMsg': str(ex)}), 500
+
+@app.route('/favicon.ico', methods=['GET'])
+def getfavicon():
+    '''Returns path of the favicon to be rendered'''
+
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'img/favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/power_bi_dashboard')
+def power_bi_dashboard():
+    return render_template('power_bi_dashboard.html')
