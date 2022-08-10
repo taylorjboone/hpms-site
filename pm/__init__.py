@@ -24,7 +24,7 @@ from . import utils, rptconverter as rpt, geo_counts as gc
 
 from .services import pbiembedservice
 
-app = Flask(__name__, static_url_path='/hpms-site')
+app = Flask(__name__, static_url_path='/pm')
 app.debug = True
 
 # Load configuration
