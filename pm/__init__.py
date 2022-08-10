@@ -4,7 +4,9 @@ import sys
 from os import listdir
 from os.path import isfile, join
 # from flask import request,redirect, url_for,send_from_directory, send_file
-from flask import Flask,current_app,render_template,flash,request,redirect, url_for,send_from_directory, send_file
+from flask import Flask,current_app,render_template,flash,request,\
+        redirect, url_for,send_from_directory, send_file, \
+        Blueprint
 import json
 from werkzeug.utils import secure_filename
 from io import StringIO
@@ -12,18 +14,21 @@ import pandas as pd
 from zipfile import ZipFile
 from glob import glob
 
+# from . import config
+
 # cwd = os.getcwd()
 # sys.path.insert(0, cwd + '/services')
 
 # from services.pbiembedservice import PbiEmbedService
-from . import utils, rptconverter as rpt, geo_counts as gc, config
+from . import utils, rptconverter as rpt, geo_counts as gc
 
 from .services import pbiembedservice
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/hpms-site')
+app.debug = True
 
 # Load configuration
-app.config.from_object('hpms-site.config.BaseConfig')
+app.config.from_object('config.BaseConfig')
 
 ALLOWED_EXTENSIONS = ['RPT']
 
@@ -31,26 +36,26 @@ DIRECTORY = 'hpms-site/static'
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/')
+@app.route('/pm/')
 def index():
     return render_template('home.html')
 
-@app.route('/chart')
+@app.route('/pm/chart')
 def chart():
     df = pd.read_csv('static/DataItem52_Cracking_Percent_non_interstate_NHS.csv', sep='|')
     return render_template('charts/chart.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
-@app.route('/tools')
+@app.route('/pm/tools')
 def tools():
     return render_template('tools.html')
 
-@app.route('/rpt_convert')
+@app.route('/pm/rpt_convert')
 def rpt_convert():
     return render_template('rpt_converter.html')
 
-@app.route('/rpt_convert/converter',methods=['POST'])
+@app.route('/pm/rpt_convert/converter',methods=['POST'])
 def convert_file():
     print(request.files)
     f = request.files['filename']
@@ -60,36 +65,36 @@ def convert_file():
     # return redirect('hpms-site/out.xlsx')
     return send_file('static/out.xlsx')
 
-@app.route('/landslide_risk')
+@app.route('/pm/landslide_risk')
 def landslide():
     return render_template('landslide_risk.html')
 
-@app.route('/geo_counts_converter')
+@app.route('/pm/geo_counts_converter')
 def geo_counts_conversion():
     return render_template('geo_count.html')
 
-@app.route('/traffic_dashboard')
+@app.route('/pm/traffic_dashboard')
 def traffic_dashboard():
     return render_template('traffic_dashboard.html')
 
-@app.route('/traffic_dashboard/aadt')
+@app.route('/pm/traffic_dashboard/aadt')
 def aadt_dashboard():
     return render_template('aadt_dashboard.html')
 
-@app.route('/traffic_dashboard/gas_price')
+@app.route('/pm/traffic_dashboard/gas_price')
 def gas_dashboard():
     return render_template('gas_price.html')
 
-@app.route('/traffic_dashboard/tourism')
+@app.route('/pm/traffic_dashboard/tourism')
 def tourism_dashboard():
     return render_template('tourism.html')
 
-@app.route('/hpms_dashboard')
+@app.route('/pm/hpms_dashboard')
 def hpms_dashboard():
     return render_template('hpms_dashboard.html')
 
 
-@app.route('/geo_counts_converter/convert',methods=['POST'])
+@app.route('/pm/geo_counts_converter/convert',methods=['POST'])
 def geo_counts_convert():
     cent_number=1
     metro_number=1
@@ -124,7 +129,7 @@ def geo_counts_convert():
 #     return ""
 
 
-@app.route('/getembedinfo', methods=['GET'])
+@app.route('/pm/getembedinfo', methods=['GET'])
 def get_embed_info():
     '''Returns report embed configuration'''
 
@@ -138,12 +143,12 @@ def get_embed_info():
     except Exception as ex:
         return json.dumps({'errorMsg': str(ex)}), 500
 
-@app.route('/favicon.ico', methods=['GET'])
+@app.route('/pm/favicon.ico', methods=['GET'])
 def getfavicon():
     '''Returns path of the favicon to be rendered'''
 
     return send_from_directory(os.path.join(app.root_path, 'static'), 'img/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/power_bi_dashboard')
+@app.route('/pm/power_bi_dashboard')
 def power_bi_dashboard():
     return render_template('power_bi_dashboard.html')
