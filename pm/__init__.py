@@ -6,7 +6,7 @@ from os.path import isfile, join
 # from flask import request,redirect, url_for,send_from_directory, send_file
 from flask import Flask,current_app,render_template,flash,request,\
         redirect, url_for,send_from_directory, send_file, \
-        Blueprint
+        Blueprint, make_response, jsonify
 import json
 from werkzeug.utils import secure_filename
 from io import StringIO
@@ -139,7 +139,9 @@ def get_embed_info():
 
     try:
         embed_info = pbiembedservice.PbiEmbedService().get_embed_params_for_single_report(app.config['WORKSPACE_ID'], app.config['REPORT_ID'])
-        return embed_info
+        embed_json = jsonify(json.loads(embed_info))
+        embed_json.headers.add('Access-Control-Allow-Origin', '*')
+        return embed_json
     except Exception as ex:
         return json.dumps({'errorMsg': str(ex)}), 500
 
@@ -151,4 +153,6 @@ def getfavicon():
 
 @app.route('/pm/power_bi_dashboard')
 def power_bi_dashboard():
-    return render_template('power_bi_dashboard.html')
+    response = make_response(render_template('power_bi_dashboard.html'))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
