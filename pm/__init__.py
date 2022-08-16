@@ -13,6 +13,7 @@ from io import StringIO
 import pandas as pd
 from zipfile import ZipFile
 from glob import glob
+from . import auth
 
 # from . import config
 
@@ -145,14 +146,23 @@ def get_embed_info():
     except Exception as ex:
         return json.dumps({'errorMsg': str(ex)}), 500
 
+
 @app.route('/pm/favicon.ico', methods=['GET'])
 def getfavicon():
     '''Returns path of the favicon to be rendered'''
 
     return send_from_directory(os.path.join(app.root_path, 'static'), 'img/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/pm/power_bi_dashboard')
+
+@app.route('/pm/power_bi_dashboard', methods=['GET', 'POST'])
 def power_bi_dashboard():
-    response = make_response(render_template('power_bi_dashboard.html'))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        login = auth.validateUser(username, password)
+        if login:
+            return render_template('power_bi_dashboard.html')
+        else:
+            return render_template('authenticate_user.html')
+    else:
+        return render_template('authenticate_user.html')
