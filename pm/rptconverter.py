@@ -38,7 +38,8 @@ def rpt_converter(inputfile,outputfile):
     data['Amount Text'].loc[data['Amount Text'].isna()] = 0
     data['Unit'].loc[data['Unit'].isna()] = 0
     data['isjv'] = 'no'
-    data['isjv'].loc[data['Amount Text'].str.contains('-', na=False)] = 'yes'
+    # print(data['Amount Text'])
+    data['isjv'].loc[data['Amount Text'].astype('str').str.contains('-', na=False)] = 'yes'
     data['Amount Text'].loc[data['isjv'] == 'yes']=data['Amount Text'].loc[data['isjv'] == 'yes'].map(lambda x : (x.replace('-','')))
     data['Amount Text'].loc[data['isjv'] == 'yes']=data['Amount Text'].loc[data['isjv'] == 'yes'].map(lambda x : ('-' + x))
     
@@ -82,3 +83,4 @@ def get_column(k,v,row):
     return '"%s"' % row[id1:id2].strip()
 
 
+# meh=rpt_converter('C:/Users/e104200/Downloads/document direct 6-23-22.RPT','C:/Users/e104200/Downloads/out.xlsx')
