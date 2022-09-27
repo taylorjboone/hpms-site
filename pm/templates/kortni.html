@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dropdown</title>
+    <style id="blue_div">
+
+    </style>
+</head>
+<body>
+<form id="activity" action="{{url_for('dropdown')}}" method="POST">
+<select name="activity">
+    {% for key,value in data.items() %}
+    <option value= "{{key}}" SELECTED>{{key}}</option>"
+    {% endfor %}
+</select>
+
+    <button type="submit" method="POST" >submit</button>
+</form>
+
+
+{% set mylist =['Activity Code','Activity Description', 'Units'] %}
+<table style="margin:5%;">
+    {% for header in mylist%}
+    <th>
+        {{header}}
+    </th>
+    {% endfor %}
+    {% for i in activity %}
+    <td>
+        {{i}}
+    </td>
+    {% endfor %}
+</table>
+
+</body>
+</html>

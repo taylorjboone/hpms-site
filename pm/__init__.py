@@ -156,3 +156,25 @@ def power_bi_dashboard():
     response = make_response(render_template('power_bi_dashboard.html'))
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/', methods=['GET', 'POST'])
+def dropdown():
+    worksheet=pd.read_excel(r"C:\Users\e104200\Downloads\activity codes.xlsx", sheet_name=1)
+    my_dict={}
+
+    if request.method == 'POST':
+        for i in range(1, len(worksheet)):
+            row = worksheet.iloc[i]
+            my_dict[row[0]] = [row[1],row[2]]
+    
+
+        activity = request.form.get('activity')
+       
+        return render_template('kortni2.html', data=my_dict, activity=activity)
+
+    for i in range(1, len(worksheet)):
+        row = worksheet.iloc[i]
+        my_dict[row[0]] = [row[1],row[2]]
+    print(my_dict)
+
+    return render_template('kortni.html',data=my_dict)
