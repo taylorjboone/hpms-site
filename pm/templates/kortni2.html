@@ -6,7 +6,7 @@
 </head>
 <body>
 <form id="activity" action="{{url_for('dropdown')}}" method="POST">
-    <select>
+    <select name="activity">
         {% for key,value in data.items() %}
         <option value= "{{key}}" SELECTED>{{key}}</option>"
         {% endfor %}

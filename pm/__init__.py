@@ -159,7 +159,7 @@ def power_bi_dashboard():
 
 @app.route('/', methods=['GET', 'POST'])
 def dropdown():
-    worksheet=pd.read_excel(r"C:\Users\e104200\Downloads\activity codes.xlsx", sheet_name=1)
+    worksheet=pd.read_excel(os.path.expanduser('~') + r"\Downloads\activity codes.xlsx", sheet_name=1)
     my_dict={}
 
     if request.method == 'POST':
