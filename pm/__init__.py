@@ -13,6 +13,8 @@ from io import StringIO
 import pandas as pd
 from zipfile import ZipFile
 from glob import glob
+import datetime
+
 
 # from . import config
 
@@ -161,7 +163,7 @@ def power_bi_dashboard():
 def dropdown():
     worksheet=pd.read_excel(os.path.expanduser('~') + r"\Downloads\activity codes.xlsx", sheet_name=1)
     my_dict={}
-
+    today=datetime.date.today().strftime('%Y-%m-%d')
     for i in range(1, len(worksheet)):
         row = worksheet.iloc[i]
         my_dict[row[0]] = [row[1],row[2]]
@@ -169,9 +171,13 @@ def dropdown():
     if request.method == 'POST':
         activity = request.form.get('activity')
         activity = {activity: my_dict.get(int(activity))}
+        date = request.form.get('planned_date')
+        dates = {'today':today, 'planned_date':date}
+        print(dates)
        
-        return render_template('kortni2.html', data=my_dict, activity=activity)
+        return render_template('kortni2.html', data=my_dict, activity=activity, dates=dates)
 
     print(my_dict)
+    dates = {'today':today}
 
-    return render_template('kortni.html',data=my_dict)
+    return render_template('kortni.html',data=my_dict, dates=dates)
