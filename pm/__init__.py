@@ -162,19 +162,16 @@ def dropdown():
     worksheet=pd.read_excel(os.path.expanduser('~') + r"\Downloads\activity codes.xlsx", sheet_name=1)
     my_dict={}
 
-    if request.method == 'POST':
-        for i in range(1, len(worksheet)):
-            row = worksheet.iloc[i]
-            my_dict[row[0]] = [row[1],row[2]]
-    
-
-        activity = request.form.get('activity')
-       
-        return render_template('kortni2.html', data=my_dict, activity=activity)
-
     for i in range(1, len(worksheet)):
         row = worksheet.iloc[i]
         my_dict[row[0]] = [row[1],row[2]]
+
+    if request.method == 'POST':
+        activity = request.form.get('activity')
+        activity = {activity: my_dict.get(int(activity))}
+       
+        return render_template('kortni2.html', data=my_dict, activity=activity)
+
     print(my_dict)
 
     return render_template('kortni.html',data=my_dict)

@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Dropdown</title>
+    <style>
+        td {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
 <form id="activity" action="{{url_for('dropdown')}}" method="POST">
@@ -16,9 +21,9 @@
 </form>
 
 {% set mylist =['Activity Code','Activity Description', 'Units'] %}
-<table style="margin:5%;">
+<table style="margin:5%; text-align:left;">
     <tr>
-        {% for header in mylist%}
+        {% for header in mylist %}
         <th>
             {{header}}
         </th>
@@ -26,15 +31,17 @@
     </tr>
     
     <tr>
+        {% for key, value in activity.items() %}
         <td>
-            {{activity}}
+            {{key}}
         </td>
         <td>
-            <!-- {{data[activity]}} -->
+            {{value[0]}}
         </td>
         <td>
-            
+            {{value[1]}}
         </td>
+        {% endfor %}
     </tr>
     
 </table>
