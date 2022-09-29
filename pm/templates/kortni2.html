@@ -9,6 +9,29 @@
         }
 
     </style>
+    <script type='text/javascript'>
+        function addFields(){
+            // Generate a dynamic number of inputs
+            var number = document.getElementById("member").value;
+            // Get the element where the inputs will be added to
+            var container = document.getElementById("container");
+            // Remove every children it had before
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (i=0;i<number;i++){
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Member " + (i+1)));
+                // Create an <input> element, set its type and name attributes
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = "member" + i;
+                container.appendChild(input);
+                // Append a line break 
+                container.appendChild(document.createElement("br"));
+            }
+        }
+    </script>
 </head>
 <body>
 <form id="activity" action="{{url_for('dropdown')}}" method="POST">
@@ -19,6 +42,7 @@
     </select>
     <input type="date" id="planned_date" name="planned_date" min="{{dates['today']}}"></input>
     <input type="submit" method="POST" action="{{url_for('dropdown')}}"></input>
+    <button id="add_row">Add row</button>
 
 </form>
 
@@ -45,8 +69,7 @@
         </td>
         {% endfor %}
         <td>
-            {% set tmp = dates["planned_date"] %}
-           {{tmp}}
+           {{dates['planned_date']}}
         </td>
         
     </tr>
