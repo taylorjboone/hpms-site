@@ -173,7 +173,7 @@ def dropdown():
         activity = {activity: my_dict.get(int(activity))}
         date = request.form.get('planned_date')
         dates = {'today':today, 'planned_date':date}
-        print(dates)
+        print(dates)                
        
         return render_template('kortni2.html', data=my_dict, activity=activity, dates=dates)
 
