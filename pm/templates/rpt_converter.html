@@ -16,7 +16,7 @@
     <p>Please submit only <b>.RPT files </b> to be converted to Excel
       <br> Please click "Choose File" to submit the file to the converter.
     </p>
-  <form id='formfile' action="{{url_for('convert_file')}}" method="POST"  enctype = "multipart/form-data">
+  <form id='formfile' action="{{url_for('index.convert_file')}}" method="POST"  enctype = "multipart/form-data">
       <input type="file" id="myFile" name="filename">
       <input type="submit">
     </form>

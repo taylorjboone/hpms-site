@@ -34,14 +34,14 @@
     </script>
 </head>
 <body>
-<form id="activity" action="{{url_for('dropdown')}}" method="POST">
+<form id="activity" action="{{url_for('index.dropdown')}}" method="POST">
     <select name="activity">
         {% for key,value in data.items() %}
         <option value= "{{key}}" SELECTED>{{key}}</option>"
         {% endfor %}
     </select>
     <input type="date" id="planned_date" name="planned_date" min="{{dates['today']}}"></input>
-    <input type="submit" method="POST" action="{{url_for('dropdown')}}"></input>
+    <input type="submit" method="POST" action="{{url_for('index.dropdown')}}"></input>
     <button id="add_row">Add row</button>
 
 </form>
