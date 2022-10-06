@@ -36,8 +36,6 @@ from pm.models.kortni_db import Task
 # from services.pbiembedservice import PbiEmbedService
 from .. import utils, rptconverter as rpt, geo_counts as gc
 
-from ..services import pbiembedservice
-
 mod = Blueprint('index',__name__,template_folder='templates')
 
 # Load configuration

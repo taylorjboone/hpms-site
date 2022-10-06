@@ -23,8 +23,6 @@ from flask_sqlalchemy import SQLAlchemy
 # from services.pbiembedservice import PbiEmbedService
 from . import utils, rptconverter as rpt, geo_counts as gc
 
-from .services import pbiembedservice
-
 app = Flask(__name__, static_url_path='/pm')
 app.debug = True
 
