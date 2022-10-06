@@ -1,6 +1,7 @@
 from sqlalchemy import Float, create_engine, text, orm, MetaData, Table, Column, Integer, String, ForeignKey, Date
 from flask_sqlalchemy import SQLAlchemy
 from pm import db,app
+from wvdot_utils import check_seg_valid
 
 
 engine = create_engine(r'sqlite+pysqlite:///C:\Users\E025205\Documents\GitHub\hpms-site\database.db', echo=True, future=True)
@@ -36,15 +37,39 @@ class Task(Base):
     updated_date = Column(Date)
 
 
+    def validate1(self):
+        print(self)
+        return '',True
+
+    def validate(self):
+        # for func in self.func_list:
+        #     print(func(self))
+        print(self.validate_geom())
+
+    def validate_geom(self):
+        corrected_segs,message,bv = check_seg_valid(self.route_id, self.bmp, self.emp)
+        print(corrected_segs)
+        if not bv:
+            message = f'corrected segs are: {corrected_segs}'
+        return message,bv
 
 
-metadata_obj.create_all(engine)
-mapper_registry.metadata.create_all(engine)
-Base.metadata.create_all(engine)
-t = Task(route_id='shit')
-with app.app_context():
 
-    db.session.add(t)
+    
 
-    db.session.commit()
+
+
+# metadata_obj.create_all(engine)
+# mapper_registry.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
+
+
+
+t = Task()
+t.validate()
+# with app.app_context():
+
+#     db.session.add(t)
+
+#     db.session.commit()
 
