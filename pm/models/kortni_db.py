@@ -12,7 +12,7 @@ import datetime
 user_dir = os.path.expanduser('~')
 db = create_engine(f'sqlite+pysqlite:///{user_dir}\Documents\GitHub\hpms-site\database.db', echo=True, future=True)
 activity_codes = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
-activity_codes['Activity Code'] = activity_codes['Activity Code'].astype('string')
+activity_codes['Activity Code'] = activity_codes['Activity Code'].astype(int)
 
 with open(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/org_nums.json', 'r') as f:
     org_nums = json.loads(f.read())
@@ -34,7 +34,7 @@ class Task(Base):
     emp = Column(Float)
     org_num = Column(String(4))
     project_name = Column(String)
-    activity_code = Column(String)
+    activity_code = Column(Integer)
     activity_description = Column(String)
     route_name = Column(String)
     accomplishments = Column(Float)
@@ -51,11 +51,6 @@ class Task(Base):
     updated_date = Column(Date)
     deleted_by = Column(String)
     deleted_date = Column(Date)
-
-
-    # def validate1(self):
-    #     print(self)
-    #     return '',True
 
     def validate(self):
         error_list = []
@@ -102,8 +97,6 @@ class Task(Base):
 
     def validate_activity(self):
         if not self.activity_code in activity_codes['Activity Code'].tolist():
-            print(type(self.activity_code))
-            print(self.activity_code, 'in', activity_codes['Activity Code'].tolist())
             return f'Activity Code: {self.activity_code} not recognized',False
         return '',True
 
@@ -136,6 +129,10 @@ class Task(Base):
         if (not type(self.task_date) == datetime.date and not type(self.task_date) == datetime.datetime) or not self.task_date <= datetime.datetime.now():
             return 'Task Date not valid',False
         return '',True
+
+    def _debug(self):
+        for k,v in self.__dict__.items():
+            print(k,v,type(v))
 
     
 mapper_registry.metadata.create_all(db)
@@ -178,14 +175,13 @@ def add_task(data):
     if bv and len(errors) == 0:
         session.add(task)
         session.commit()
-        print('Task added to database')
+        print('\nTask added to database\n')
     else:
-        print(bv, 'Errors: ', errors)
+        print('\n', bv, 'Errors: ', errors, '\n')
 
 date_fields = ['task_date', 'created_date', 'updated_date', 'deleted_date']
 def update_task(data):
     task = session.query(Task).filter_by(id=data.get('id', None)).first()
-    # task.debug()
     if task is None:
         return {'status': False, 'errors':['ID for record value does not exist'], 'id':data.get('id',None)}
 
@@ -194,21 +190,24 @@ def update_task(data):
             boolval = False
             try:
                 v = parser.parse(v) if type(v) == str else ''
+                print('\nDate parsed properly\n')
                 boolval = True
             except:
                 pass
             if boolval: setattr(task,k,v)
+        else:
+            setattr(task,k,v)
     
     bv,errors = task.validate()
     if bv:
         # TODO task.updated_by = session['User']
         task.updated_date = datetime.datetime.now()
         session.commit()
-        print('Task updated')
+        print('\nTask updated\n')
     else:
         session.rollback()
-        print('*****Update failed, rolling back to previous version of db')
-        print('*****Errors: ', errors)
+        print('\n*****Update failed, rolling back to previous version of db')
+        print('*****Errors: ', errors, '\n')
 
     statusbool = task is not None and bv
     return {'id':task.id, 'status':statusbool, 'errors':errors}
@@ -216,15 +215,15 @@ def update_task(data):
         
 
 dummy_data = {
-    'id': 2,
+    'id': 1,
     'route_id': '20200600000EB',
-    'bmp': 18,
-    'emp': 19,
+    'bmp': 17,
+    'emp': 18,
     'org_num': '0121',
     'project_name': 'test_project 2',
-    'activity_code': 381,
+    'activity_code': 405,
     'activity_description': 'Bridge Structure Replacement', 
-    'route_name': 'Hughes Creek Rd.',
+    'route_name': 'River Rd.',
     'accomplishments': 132,
     'units': 'Employee Hours (EH)',
     'crew_members': 4, 
@@ -238,6 +237,7 @@ update_task(dummy_data)
 
 q = session.query(Task).all()
 
+print('\n\n\n')
 print('id', 'route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_code', 'activity_description', 'route_name', 'accomplishments', 'units', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date', 'notes', 'created_by', 'created_date', 'updated_by', 'updated_date', 'deleted_by', 'deleted_date')
 for i in q:
     print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted_by, i.deleted_date)
