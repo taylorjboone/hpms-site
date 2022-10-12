@@ -1,6 +1,6 @@
 from distutils.log import error
 from dateutil import parser
-from sqlalchemy import Float, create_engine, text, orm, MetaData, Table, Column, Integer, String, ForeignKey, Date, and_, or_
+from sqlalchemy import Float, create_engine, text, orm, MetaData, Table, Column, Integer, String, ForeignKey, Date, and_, or_, Boolean
 from flask_sqlalchemy import SQLAlchemy
 from wvdot_utils import check_seg_valid
 import pandas as pd
@@ -49,6 +49,7 @@ class Task(Base):
     created_date = Column(Date)
     updated_by = Column(String)
     updated_date = Column(Date)
+    deleted = Column(Boolean)
     deleted_by = Column(String)
     deleted_date = Column(Date)
 
@@ -175,7 +176,7 @@ def add_task(data):
     if bv and len(errors) == 0:
         session.add(task)
         session.commit()
-        print('\nTask added to database\n')
+        print('\n*****Task added to database\n')
     else:
         print('\n', bv, 'Errors: ', errors, '\n')
 
@@ -203,7 +204,7 @@ def update_task(data):
         # TODO task.updated_by = session['User']
         task.updated_date = datetime.datetime.now()
         session.commit()
-        print('\nTask updated\n')
+        print('\n*****Task updated\n')
     else:
         session.rollback()
         print('\n*****Update failed, rolling back to previous version of db')
@@ -212,13 +213,24 @@ def update_task(data):
     statusbool = task is not None and bv
     return {'id':task.id, 'status':statusbool, 'errors':errors}
 
+
+def delete_task(id):
+    q = session.query(Task).filter(Task.id == id,Task.deleted == None).first()
+    try:
+        del_data = {'deleted': True, 'deleted_date': datetime.datetime.today()}
+        for k,v in del_data.items():
+            setattr(q,k,v)
+        session.commit()
+        print('\n*****Task deleted\n')
+    except:
+        print('\n*****Could not find the indicated record\n')
+
         
 
 dummy_data = {
-    'id': 1,
     'route_id': '20200600000EB',
-    'bmp': 17,
-    'emp': 18,
+    'bmp': 19,
+    'emp': 20,
     'org_num': '0121',
     'project_name': 'test_project 2',
     'activity_code': 405,
@@ -233,11 +245,11 @@ dummy_data = {
     'notes': 'test'
     }
 
-update_task(dummy_data)
+
 
 q = session.query(Task).all()
 
 print('\n\n\n')
-print('id', 'route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_code', 'activity_description', 'route_name', 'accomplishments', 'units', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date', 'notes', 'created_by', 'created_date', 'updated_by', 'updated_date', 'deleted_by', 'deleted_date')
+print('id', 'route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_code', 'activity_description', 'route_name', 'accomplishments', 'units', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date', 'notes', 'created_by', 'created_date', 'updated_by', 'updated_date', 'deleted', 'deleted_by', 'deleted_date')
 for i in q:
-    print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted_by, i.deleted_date)
+    print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted, i.deleted_by, i.deleted_date)
