@@ -26,14 +26,8 @@ from zipfile import ZipFile
 from glob import glob
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from pm.models.kortni_db import Task, add_task, update_task, delete_task
 
-from pm.models.kortni_db import Task
-# from . import config
-
-# cwd = os.getcwd()
-# sys.path.insert(0, cwd + '/services')
-
-# from services.pbiembedservice import PbiEmbedService
 from .. import utils, rptconverter as rpt, geo_counts as gc
 
 mod = Blueprint('index',__name__,template_folder='templates')
@@ -43,6 +37,8 @@ mod = Blueprint('index',__name__,template_folder='templates')
 ALLOWED_EXTENSIONS = ['RPT']
 
 DIRECTORY = 'hpms-site/static'
+
+user_dir = os.path.expanduser('~')
 
 
 def allowed_file(filename):
@@ -134,59 +130,26 @@ def geo_counts_convert():
         os.remove(b)
     return send_file(r'static\geo_count_conversion\zip_geo_count.zip')
 
-# def upload():
-#     uploaded_files = Flask.request.files.getlist("file[]")
-#     print(uploaded_files)
-#     return ""
 
-
-@mod.route('/pm/getembedinfo', methods=['GET'])
-def get_embed_info():
-    '''Returns report embed configuration'''
-
-    config_result = utils.Utils.check_config(app)
-    if config_result is not None:
-        return json.dumps({'errorMsg': config_result}), 500
-
-    try:
-        embed_info = pbiembedservice.PbiEmbedService().get_embed_params_for_single_report(mod.config['WORKSPACE_ID'], mod.config['REPORT_ID'])
-        embed_json = jsonify(json.loads(embed_info))
-        embed_json.headers.add('Access-Control-Allow-Origin', '*')
-        return embed_json
-    except Exception as ex:
-        return json.dumps({'errorMsg': str(ex)}), 500
-
-@mod.route('/pm/favicon.ico', methods=['GET'])
-def getfavicon():
-    '''Returns path of the favicon to be rendered'''
-
-    return send_from_directory(os.path.join(mod.root_path, 'static'), 'img/favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@mod.route('/pm/power_bi_dashboard')
-def power_bi_dashboard():
-    response = make_response(render_template('power_bi_dashboard.html'))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-@mod.route('/', methods=['GET', 'POST'])
-def dropdown():
-    worksheet=pd.read_excel(os.path.expanduser('~') + r"\Downloads\activity codes.xlsx", sheet_name=1)
-    my_dict={}
-    today=datetime.date.today().strftime('%Y-%m-%d')
+@mod.route('/pm/work_plan', methods=['GET', 'POST'])
+def work_plan():
+    worksheet = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
+    activity_dict = {}
+    today = datetime.date.today().strftime('%Y-%m-%d')
     for i in range(1, len(worksheet)):
         row = worksheet.iloc[i]
-        my_dict[row[0]] = [row[1],row[2]]
+        activity_dict[row[0]] = [row[1],row[2]]
 
     if request.method == 'POST':
         activity = request.form.get('activity')
-        activity = {activity: my_dict.get(int(activity))}
-        date = request.form.get('planned_date')
-        dates = {'today':today, 'planned_date':date}
+        activity = {activity: activity_dict.get(int(activity))}
+        date = request.form.get('task_date')
+        dates = {'today':today, 'task_date':date}
         print(dates)                
        
-        return render_template('kortni2.html', data=my_dict, activity=activity, dates=dates)
+        return render_template('kortni2.html', activity_dict=activity_dict, activity=activity, dates=dates)
 
-    print(my_dict)
+    print(activity_dict)
     dates = {'today':today}
 
-    return render_template('kortni.html',data=my_dict, dates=dates)
+    return render_template('kortni.html',activity_dict=activity_dict, dates=dates)

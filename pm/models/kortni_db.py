@@ -227,29 +227,30 @@ def delete_task(id):
 
         
 
-dummy_data = {
-    'route_id': '20200600000EB',
-    'bmp': 19,
-    'emp': 20,
-    'org_num': '0121',
-    'project_name': 'test_project 2',
-    'activity_code': 405,
-    'activity_description': 'Bridge Structure Replacement', 
-    'route_name': 'River Rd.',
-    'accomplishments': 132,
-    'units': 'Employee Hours (EH)',
-    'crew_members': 4, 
-    'travel_hours': 11,
-    'onsite_hours': 120,
-    'task_date': '9/12/16',
-    'notes': 'test'
-    }
+# dummy_data = {
+#     'route_id': '20200600000EB',
+#     'bmp': 19,
+#     'emp': 20,
+#     'org_num': '0121',
+#     'project_name': 'test_project 2',
+#     'activity_code': 405,
+#     'activity_description': 'Bridge Structure Replacement', 
+#     'route_name': 'River Rd.',
+#     'accomplishments': 132,
+#     'units': 'Employee Hours (EH)',
+#     'crew_members': 4, 
+#     'travel_hours': 11,
+#     'onsite_hours': 120,
+#     'task_date': '9/12/16',
+#     'notes': 'test'
+#     }
 
 
 
-q = session.query(Task).all()
+# q = session.query(Task).all()
 
-print('\n\n\n')
-print('id', 'route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_code', 'activity_description', 'route_name', 'accomplishments', 'units', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date', 'notes', 'created_by', 'created_date', 'updated_by', 'updated_date', 'deleted', 'deleted_by', 'deleted_date')
-for i in q:
-    print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted, i.deleted_by, i.deleted_date)
+# print('\n\n\n')
+# print('id', 'route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_code', 'activity_description', 'route_name', 'accomplishments', 'units', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date', 'notes', 'created_by', 'created_date', 'updated_by', 'updated_date', 'deleted', 'deleted_by', 'deleted_date')
+# for i in q:
+#     print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted, i.deleted_by, i.deleted_date)
+

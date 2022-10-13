@@ -32,19 +32,44 @@
             }
         }
     </script>
+    <link rel='stylesheet' type='text/css' href="{{url_for('static', filename='css/global.css')}}">
+    {% import 'macros.html' as macros %}
 </head>
-<body>
-<form id="activity" action="{{url_for('index.dropdown')}}" method="POST">
-    <select name="activity">
-        {% for key,value in data.items() %}
-        <option value= "{{key}}" SELECTED>{{key}}</option>"
-        {% endfor %}
-    </select>
-    <input type="date" id="planned_date" name="planned_date" min="{{dates['today']}}"></input>
-    <input type="submit" method="POST" action="{{url_for('index.dropdown')}}"></input>
-    <button id="add_row">Add row</button>
+<body style="text-align:center;    text-align: -webkit-center;">
+    {{ macros.navbar() }}
 
-</form>
+    <div style="overflow: auto; width: 80%; background-color:#1e1e1e; color: white; margin: auto;">
+        <form id="activity" action="{{url_for('index.work_plan')}}" method="POST">
+            <label for="route_id">Route ID</label>
+            <input id="route_id"></input>
+            <label for="bmp">Beginning MilePoint</label>
+            <input id="bmp"></input>
+            <label for="emp">Ending MilePoint</label>
+            <input id="emp"></input>
+            
+            <label for="project_name">Project Name</label>
+            <input id="project_name"></input>
+            <label for="route_name">Route Name</label>
+            <input id="route_name"></input>
+            <select name="activity">
+                {% for key,value in activity_dict.items() %}
+                <option value= "{{key}}" SELECTED>{{key}}</option>"
+                {% endfor %}
+            </select>
+            <label for="accomplishments">Accomplishments</label>
+            <input id="accomplishments">
+            <label for="crew_members">Crew Members</label>
+            <input id="crew_members">
+            <label for="travel_hours">Travel Hours</label>
+            <input id="travel_hours">
+            <label for="onsite_hours">Onsite Hours</label>
+            <input id="onsite_hours">
+            <input type="date" id="task_date" name="task_date" min="{{dates['today']}}"></input>
+            <input type="submit" method="POST" action="{{url_for('index.work_plan')}}"></input>
+    
+        </form>
+    
+    </div>
 
 {% set mylist =['Activity Code','Activity Description', 'Units','Planned Date','Accomplishment Date'] %}
 <table style="margin:5%; text-align:left;">
