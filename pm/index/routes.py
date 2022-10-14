@@ -26,17 +26,20 @@ from zipfile import ZipFile
 from glob import glob
 import datetime
 from flask_sqlalchemy import SQLAlchemy
-from pm.models.kortni_db import Task, add_task, update_task, delete_task
+from pm.models.kortni_db import Task, apply_edits
+
+from flask_cors import CORS # Apparently we don't need this upon deployment
 
 from .. import utils, rptconverter as rpt, geo_counts as gc
+DIRECTORY = 'hpms-site/static'
 
-mod = Blueprint('index',__name__,template_folder='templates')
+mod = Blueprint('index',__name__,template_folder='templates',static_url_path='pm/static')
+CORS(mod)
 
 # Load configuration
 
 ALLOWED_EXTENSIONS = ['RPT']
 
-DIRECTORY = 'hpms-site/static'
 
 user_dir = os.path.expanduser('~')
 
@@ -48,11 +51,6 @@ def allowed_file(filename):
 @mod.route('/pm/')
 def index():
     return render_template('home.html')
-
-@mod.route('/pm/chart')
-def chart():
-    df = pd.read_csv('static/DataItem52_Cracking_Percent_non_interstate_NHS.csv', sep='|')
-    return render_template('charts/chart.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
 @mod.route('/pm/tools')
 def tools():
@@ -79,27 +77,6 @@ def landslide():
 @mod.route('/pm/geo_counts_converter')
 def geo_counts_conversion():
     return render_template('geo_count.html')
-
-@mod.route('/pm/traffic_dashboard')
-def traffic_dashboard():
-    return render_template('traffic_dashboard.html')
-
-@mod.route('/pm/traffic_dashboard/aadt')
-def aadt_dashboard():
-    return render_template('aadt_dashboard.html')
-
-@mod.route('/pm/traffic_dashboard/gas_price')
-def gas_dashboard():
-    return render_template('gas_price.html')
-
-@mod.route('/pm/traffic_dashboard/tourism')
-def tourism_dashboard():
-    return render_template('tourism.html')
-
-@mod.route('/pm/hpms_dashboard')
-def hpms_dashboard():
-    return render_template('hpms_dashboard.html')
-
 
 @mod.route('/pm/geo_counts_converter/convert',methods=['POST'])
 def geo_counts_convert():
@@ -133,26 +110,28 @@ def geo_counts_convert():
 
 @mod.route('/pm/work_plan', methods=['GET', 'POST'])
 def work_plan():
-    worksheet = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
-    activity_dict = {}
-    today = datetime.date.today().strftime('%Y-%m-%d')
-    for i in range(1, len(worksheet)):
-        row = worksheet.iloc[i]
-        activity_dict[row[0]] = [row[1],row[2]]
+    return send_from_directory('react_test/build', 'index.html')
 
-    if request.method == 'POST':
-        activity = request.form.get('activity')
-        activity = {activity: activity_dict.get(int(activity))}
-        date = request.form.get('task_date')
-        dates = {'today':today, 'task_date':date}
-        print(dates)                
+    # worksheet = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
+    # activity_dict = {}
+    # today = datetime.date.today().strftime('%Y-%m-%d')
+    # for i in range(1, len(worksheet)):
+    #     row = worksheet.iloc[i]
+    #     activity_dict[row[0]] = [row[1],row[2]]
+
+    # if request.method == 'POST':
+    #     activity = request.form.get('activity')
+    #     activity = {activity: activity_dict.get(int(activity))}
+    #     date = request.form.get('task_date')
+    #     dates = {'today':today, 'task_date':date}
+    #     print(dates)                
        
-        return render_template('kortni2.html', activity_dict=activity_dict, activity=activity, dates=dates)
+    #     return render_template('kortni2.html', activity_dict=activity_dict, activity=activity, dates=dates)
 
-    print(activity_dict)
-    dates = {'today':today}
+    # print(activity_dict)
+    # dates = {'today':today}
 
-    return render_template('kortni.html',activity_dict=activity_dict, dates=dates)
+    # return render_template('kortni.html',activity_dict=activity_dict, dates=dates)
 
 @mod.route('/login', methods = ['GET', 'POST'])
 def login():

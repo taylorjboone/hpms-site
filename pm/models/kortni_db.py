@@ -23,6 +23,7 @@ metadata_obj = MetaData()
 mapper_registry = orm.registry()
 Base = mapper_registry.generate_base()
 session = orm.Session(db)
+LIMIT = 1000
 
 
 class Task(Base):
@@ -224,6 +225,34 @@ def delete_task(id):
         print('\n*****Task deleted\n')
     except:
         print('\n*****Could not find the indicated record\n')
+
+
+def apply_edits(obj):
+    adds = obj.get('adds',[])
+    if len(adds) > LIMIT:
+        return {'status':False,'message':"Request had more than the limit of transactions per transaction type. %s " % LIMIT}
+    else:
+        add_results = [add_task(i) for i in adds]
+
+    updates = obj.get('updates',[])
+    if len(updates) > LIMIT:
+        return {'status':False,'message':"Request had more than the limit of transactions per transaction type. %s " % LIMIT}
+    else:
+        update_results = [update_task(i) for i in updates]
+
+
+    deletes = obj.get('deletes',[])
+    if len(deletes) > LIMIT:
+        return {'status':False,'message':"Request had more than the limit of transactions per transaction type. %s " % LIMIT}
+    else:
+        delete_results = [delete_task(i) for i in deletes]
+
+
+    return {
+        'addResults':add_results,
+        'deleteResults':delete_results,
+        'updateResults':update_results,
+    }
 
         
 

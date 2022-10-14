@@ -3,7 +3,6 @@ import os
 import sys
 from os import listdir
 from os.path import isfile, join
-# from flask import request,redirect, url_for,send_from_directory, send_file
 from flask import Flask,current_app,render_template,flash,request,\
         redirect, url_for,send_from_directory, send_file, \
         Blueprint, make_response, jsonify
@@ -16,14 +15,13 @@ from glob import glob
 import datetime
 from flask_sqlalchemy import SQLAlchemy
 
-
 # cwd = os.getcwd()
 # sys.path.insert(0, cwd + '/services')
 
 # from services.pbiembedservice import PbiEmbedService
 from . import utils, rptconverter as rpt, geo_counts as gc
 
-app = Flask(__name__, static_url_path='/pm')
+app = Flask(__name__, static_url_path='/pm/static')
 app.debug = True
 
 # Load configuration
