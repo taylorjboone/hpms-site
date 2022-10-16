@@ -64,6 +64,8 @@ const Basic = () => {
                 var v = values[k]
                 if (k == 'task_date') {
                   return <td><Field type="date" name={k}/></td>
+                } else if (k == 'bmp') {
+                  return <td><Field type="" name={k}/></td>
                 } else {
                   return <td><Field type="" name={k}/></td>
                 }
