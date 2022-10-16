@@ -1,9 +1,13 @@
 // Render Prop
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import Button from '@mui/material/Button';
 
-const Basic = () => (
-  <div>
+const labelMap = { id: 'ID', route_id: 'Route ID', bmp: 'BMP', emp: 'EMP', org_num: 'Organization Number', project_name: 'Project Name', activity_code: 'Activity Code', activity_description: 'Activity Description', route_name: 'Route Name', accomplishments: 'Accomplishments', units: 'Units', crew_members: 'Crew Members', travel_hours: 'Travel Hours', onsite_hours: 'On-Site', task_date: 'Task Date', notes: 'Notes' }
+
+const Basic = () => {
+  return <div style={{ width: "100%", overflow: 'auto'}}>
     <h1>Task Information</h1>
     <Formik
       initialValues={{ id: '',
@@ -22,96 +26,68 @@ const Basic = () => (
                       onsite_hours: '',
                       task_date: '',
                       notes: '' }}
-      validate={values => {
-        const errors = {};
-        if (!values.route_id) {
-          errors.route_id = 'Required';
-      } else if (( values.route_id.length != 13 ) && (values.route_id.length != 18)) {
-          errors.route_id = 'Route ID must be 13 or 18 characters in length'
-      }
-      return errors;
-  }}
+  validationSchema={Yup.object({
+    route_id: Yup.string()
+      .min(13, 'Route ID must be 13 characters at minimum')
+      .max(18, 'Route ID can only be 18 characters at maximum')
+      .required('Required'),
+    bmp: Yup.number()
+      .required('Required'),
+    emp: Yup.number()
+      .required('Required'),
+    org_num: Yup.string()
+      .required('Required'),
+    project_name: Yup.string()
+      .required('Required'),
+    activity_code: Yup.string()
+      .required('Required'),
+  })}
   onSubmit={(values, { setSubmitting }) => {
+      setSubmitting(true);
       setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           setSubmitting(false);
-      }, 400);
+      }, 500);
   }}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, values, errors, touched }) => (
         <Form>
-          <label for="id">ID</label>
-          <Field type="text" name="id"/>
-          <ErrorMessage name="id" component="div" />
-          <br/>
-          <label for="route_id">Route ID</label>
-          <Field type="" name="route_id" />
-          <ErrorMessage name="route_id" component="div" />
-          <br/>
-          <label for="bmp">BMP</label>
-          <Field type="" name="bmp" />
-          <ErrorMessage name="bmp" component="div" />
-          <br/>
-          <label for="emp">EMP</label>
-          <Field type="" name="emp" />
-          <ErrorMessage name="emp" component="div" />
-          <br/>
-          <label for="org_num">Organization Number</label>
-          <Field type="" name="org_num" />
-          <ErrorMessage name="org_num" component="div" />
-          <br/>
-          <label for="project_name">Project Name</label>
-          <Field type="" name="project_name" />
-          <ErrorMessage name="project_name" component="div" />
-          <br/>
-          <label for="activity_code">Activity Code</label>
-          <Field type="" name="activity_code" />
-          <ErrorMessage name="activity_code" component="div" />
-          <br/>
-          <label for="activity_description">Activity Description</label>
-          <Field type="" name="activity_description" />
-          <ErrorMessage name="activity_description" component="div" />
-          <br/>
-          <label for="route_name">Route Name</label>
-          <Field type="" name="route_name" />
-          <ErrorMessage name="route_name" component="div" />
-          <br/>
-          <label for="accomplishments">Accomplishments</label>
-          <Field type="" name="accomplishments" />
-          <ErrorMessage name="accomplishments" component="div" />
-          <br/>
-          <label for="units">Units</label>
-          <Field type="" name="units" />
-          <ErrorMessage name="units" component="div" />
-          <br/>
-          <label for="crew_members">Crew Members</label>
-          <Field type="" name="crew_members" />
-          <ErrorMessage name="crew_members" component="div" />
-          <br/>
-          <label for="travel_hours">Travel Hours</label>
-          <Field type="" name="travel_hours" />
-          <ErrorMessage name="travel_hours" component="div" />
-          <br/>
-          <label for="onsite_hours">On-Site Hours</label>
-          <Field type="" name="onsite_hours" />
-          <ErrorMessage name="onsite_hours" component="div" />
-          <br/>
-          <label for="task_date">Task Date</label>
-          <Field type="" name="task_date" />
-          <ErrorMessage name="task_date" component="div" />
-          <br/>
-          <label for="notes">Notes</label>
-          <Field type="" name="notes" />
-          <ErrorMessage name="notes" component="div" />
-          <br/>
+          <table>
+            <thead>
+              {Object.keys(values).map((k)=>{
+              var v = labelMap[k];
+              return <th><label for={k}>{v}</label></th>
+              })}
+            </thead>
+            <tr>
+              {Object.keys(values).map((k)=>{
+                var v = values[k]
+                if (k == 'task_date') {
+                  return <td><Field type="date" name={k}/></td>
+                } else {
+                  return <td><Field type="" name={k}/></td>
+                }
+              })}
+            </tr>
+            <tr>
+              {Object.keys(values).map((k)=>{
+                if (errors[k] && touched[k]) {
+                  return <ErrorMessage name={k} component="td"/>
+                } else {
+                  return <td><ErrorMessage name={k} component="div" /></td>
+                }
+              })}
+            </tr>
+          </table>
           
-          <button type="submit" disabled={isSubmitting}>
+          <Button type='submit' variant='contained' disabled={isSubmitting}>
             Submit
-          </button>
+          </Button>
+
         </Form>
       )}
     </Formik>
   </div>
-);
+};
 
 export default Basic;
