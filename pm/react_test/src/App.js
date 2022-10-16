@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Button from '@mui/material/Button';
 
-const labelMap = { id: 'ID', route_id: 'Route ID', bmp: 'BMP', emp: 'EMP', org_num: 'Organization Number', project_name: 'Project Name', activity_code: 'Activity Code', activity_description: 'Activity Description', route_name: 'Route Name', accomplishments: 'Accomplishments', units: 'Units', crew_members: 'Crew Members', travel_hours: 'Travel Hours', onsite_hours: 'On-Site', task_date: 'Task Date', notes: 'Notes' }
+const labelMap = { route_id: 'Route ID', bmp: 'BMP', emp: 'EMP', org_num: 'Organization Number', project_name: 'Project Name', activity_code: 'Activity Code', activity_description: 'Activity Description', route_name: 'Route Name', accomplishments: 'Accomplishments', units: 'Units', crew_members: 'Crew Members', travel_hours: 'Travel Hours', onsite_hours: 'On-Site', task_date: 'Task Date', notes: 'Notes' }
 
 const Basic = () => {
   return <div style={{ width: "100%", overflow: 'auto'}}>
@@ -56,7 +56,9 @@ const Basic = () => {
             <thead>
               {Object.keys(values).map((k)=>{
               var v = labelMap[k];
-              return <th><label for={k}>{v}</label></th>
+              if (k !== 'id') {
+                return <th><label for={k}>{v}</label></th>
+              }
               })}
             </thead>
             <tr>
@@ -64,11 +66,9 @@ const Basic = () => {
                 var v = values[k]
                 if (k == 'task_date') {
                   return <td><Field type="date" name={k}/></td>
-                } else if (k == 'bmp') {
-                  return <td><Field type="" name={k}/></td>
-                } else {
-                  return <td><Field type="" name={k}/></td>
-                }
+                } else if (k !== 'id') {
+                  return <td><Field type="" name={k} style={{width:"90%", textAlign:"center"}}/></td>
+                } 
               })}
             </tr>
             <tr>
@@ -76,7 +76,7 @@ const Basic = () => {
                 if (errors[k] && touched[k]) {
                   return <ErrorMessage name={k} component="td"/>
                 } else {
-                  return <td><ErrorMessage name={k} component="div" /></td>
+                  return <td><ErrorMessage name={k} component="td"  width='5px'/></td>
                 }
               })}
             </tr>
