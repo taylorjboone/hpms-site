@@ -98,12 +98,8 @@ function postData(data) {
   })}
   onSubmit={(values, { setSubmitting }) => {
       setSubmitting(true);
-      postData(values)
+      postData({adds:[values]})
       setSubmitting(false)
-      // setTimeout(() => {
-      //     alert(JSON.stringify(values, null, 2));
-      //     setSubmitting(false);
-      // }, 500);
   }}
     >
       {({ isSubmitting, values, errors, touched }) => (
