@@ -133,7 +133,7 @@ def work_plan():
 
     # return render_template('kortni.html',activity_dict=activity_dict, dates=dates)
 
-@mod.route('/pm/work_plan/api', methods='POST')
+@mod.route('/pm/work_plan/apply_edits', methods=['POST'])
 def work_plan_api():
     edits = json.loads(request.data)
     return jsonify(apply_edits(edits))

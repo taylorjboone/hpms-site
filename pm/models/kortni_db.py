@@ -128,7 +128,7 @@ class Task(Base):
         return '',True
 
     def validate_task_date(self):
-        if (not type(self.task_date) == datetime.date and not type(self.task_date) == datetime.datetime) or not self.task_date <= datetime.datetime.now():
+        if (not type(self.task_date) == datetime.date) or (not self.task_date <= datetime.date.today()):
             return 'Task Date not valid',False
         return '',True
 
@@ -180,6 +180,7 @@ def add_task(data):
         print('\n*****Task added to database\n')
     else:
         print('\n', bv, 'Errors: ', errors, '\n')
+    return {'status': bv and len(errors) == 0, 'errors':errors, 'id':task.id}
 
 date_fields = ['task_date', 'created_date', 'updated_date', 'deleted_date']
 def update_task(data):
@@ -217,14 +218,19 @@ def update_task(data):
 
 def delete_task(id):
     q = session.query(Task).filter(Task.id == id,Task.deleted == None).first()
+    errors = []
     try:
         del_data = {'deleted': True, 'deleted_date': datetime.datetime.today()}
         for k,v in del_data.items():
             setattr(q,k,v)
         session.commit()
         print('\n*****Task deleted\n')
+        bv = True
     except:
         print('\n*****Could not find the indicated record\n')
+        errors.append(f'ID: {id} does not exist or has already been deleted')
+        bv = False
+    return {'status': bv, 'id': id, 'errors':errors}
 
 
 def apply_edits(obj):
@@ -254,25 +260,36 @@ def apply_edits(obj):
         'updateResults':update_results,
     }
 
+def query_db(ids):
+    q = session.query(Task).filter(Task.id.in_(ids)).all()
+    data = {}
+    try:
+        for i in q:
+            data[i.id] = {i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes}
+    except:
+        return {'status':False, 'data':data}
+    return {'status':True, 'data':data}
+
+
         
 
-# dummy_data = {
-#     'route_id': '20200600000EB',
-#     'bmp': 19,
-#     'emp': 20,
-#     'org_num': '0121',
-#     'project_name': 'test_project 2',
-#     'activity_code': 405,
-#     'activity_description': 'Bridge Structure Replacement', 
-#     'route_name': 'River Rd.',
-#     'accomplishments': 132,
-#     'units': 'Employee Hours (EH)',
-#     'crew_members': 4, 
-#     'travel_hours': 11,
-#     'onsite_hours': 120,
-#     'task_date': '9/12/16',
-#     'notes': 'test'
-#     }
+dummy_data = {
+    'route_id': '20200600000EB',
+    'bmp': 19,
+    'emp': 20,
+    'org_num': '0121',
+    'project_name': 'test_project 2',
+    'activity_code': 405,
+    'activity_description': 'Bridge Structure Replacement', 
+    'route_name': 'River Rd.',
+    'accomplishments': 132,
+    'units': 'Employee Hours (EH)',
+    'crew_members': 4, 
+    'travel_hours': 11,
+    'onsite_hours': 120,
+    'task_date': '9/12/16',
+    'notes': 'test'
+    }
 
 
 
