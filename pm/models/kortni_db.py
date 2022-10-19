@@ -128,6 +128,7 @@ class Task(Base):
         return '',True
 
     def validate_task_date(self):
+        print(self.task_date, type(self.task_date))
         if (not type(self.task_date) == datetime.date) or (not self.task_date <= datetime.date.today()):
             return 'Task Date not valid',False
         return '',True
@@ -287,11 +288,11 @@ dummy_data = {
     'crew_members': 4, 
     'travel_hours': 11,
     'onsite_hours': 120,
-    'task_date': '9/12/16',
+    'task_date': '11-22-2022',
     'notes': 'test'
     }
 
-
+print(add_task(dummy_data))
 
 # q = session.query(Task).all()
 
