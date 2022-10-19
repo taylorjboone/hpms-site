@@ -31,7 +31,7 @@ ALLOWED_EXTENSIONS = ['RPT']
 
 DIRECTORY = 'hpms-site/static'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///C:\Users\E025205\Documents\GitHub\hpms-site\database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../database.db'
 db = SQLAlchemy(app)
 
 from pm.index.routes import mod

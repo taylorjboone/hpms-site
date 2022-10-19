@@ -2,36 +2,39 @@ from distutils.log import error
 from dateutil import parser
 from sqlalchemy import Float, create_engine, text, orm, MetaData, Table, Column, Integer, String, ForeignKey, Date, and_, or_, Boolean
 from flask_sqlalchemy import SQLAlchemy
-from pm import db
+from pm import db, app
 from wvdot_utils import check_seg_valid
 import pandas as pd
 import os
 import json
 import datetime
 
-from pm import app 
+# This is necessary for the flask_sqlalchemy db to be used in another file
 app.app_context().push()
 
 user_dir = os.path.expanduser('~')
-# db = create_engine(f'sqlite+pysqlite:///{user_dir}\Documents\GitHub\hpms-site\database.db', echo=True, future=True)
-activity_codes = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
+# db = create_engine(f'sqlite+pysqlite:///../../database.db', echo=True, future=True)
+
+activity_codes = pd.read_csv('../static/activity_codes.csv')
 activity_codes['Activity Code'] = activity_codes['Activity Code'].astype(int)
 
-with open(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/org_nums.json', 'r') as f:
+with open('../static/org_nums.json', 'r') as f:
     org_nums = json.loads(f.read())
 
 
+# Keeping these commented in case we need to remake the table 
 # metadata_obj = MetaData()
-
 # mapper_registry = orm.registry()
 # Base = mapper_registry.generate_base()
 # session = orm.Session(db)
-LIMIT = 1000
+# LIMIT = 1000
 
 
 class Task(db.Model):
+    # Do I really need to explain this one?
     __tablename__ = 'tasks'
 
+    # Setting columns and dtypes in the table
     id = Column(Integer, primary_key=True)
     route_id = Column(String)
     bmp = Column(Float)
@@ -49,6 +52,7 @@ class Task(db.Model):
     task_date = Column(Date)
     notes = Column(String)
 
+    # These columns will be hidden from users
     created_by = Column(String)
     created_date = Column(Date)
     updated_by = Column(String)
@@ -57,6 +61,8 @@ class Task(db.Model):
     deleted_by = Column(String)
     deleted_date = Column(Date)
 
+
+    # Runs through the validation functions for each field and returns a list of any errors
     def validate(self):
         error_list = []
 
@@ -79,19 +85,23 @@ class Task(db.Model):
         er8,bv8 = self.validate_task_date()
         error_list += [er8]
 
+        # Removes empty strings from error list (they get returned when there are no errors)
         error_list = [i for i in error_list if i != '']
 
+        # Returns a bool and any errors
         return len(error_list)==0,error_list
 
 
 
-
+    # Validates the route ID and segments given using WVDOT Utils
     def validate_geom(self):
         corrected_segs,message,bv = check_seg_valid(self.route_id, self.bmp, self.emp)
+        # If the segments were valid
         if not bv and len(message) == 0:
             message = f'corrected segs are: {corrected_segs}'
+        # If the segments were not valid
         elif bv and len(message) > 0: 
-            return message,bv 
+            return message,bv
         return message,bv
 
     def validate_org(self):
