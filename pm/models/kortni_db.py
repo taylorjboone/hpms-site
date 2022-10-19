@@ -2,15 +2,18 @@ from distutils.log import error
 from dateutil import parser
 from sqlalchemy import Float, create_engine, text, orm, MetaData, Table, Column, Integer, String, ForeignKey, Date, and_, or_, Boolean
 from flask_sqlalchemy import SQLAlchemy
+from pm import db
 from wvdot_utils import check_seg_valid
 import pandas as pd
 import os
 import json
 import datetime
 
+from pm import app 
+app.app_context().push()
 
 user_dir = os.path.expanduser('~')
-db = create_engine(f'sqlite+pysqlite:///{user_dir}\Documents\GitHub\hpms-site\database.db', echo=True, future=True)
+# db = create_engine(f'sqlite+pysqlite:///{user_dir}\Documents\GitHub\hpms-site\database.db', echo=True, future=True)
 activity_codes = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
 activity_codes['Activity Code'] = activity_codes['Activity Code'].astype(int)
 
@@ -18,15 +21,15 @@ with open(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/org_nums.json', 'r')
     org_nums = json.loads(f.read())
 
 
-metadata_obj = MetaData()
+# metadata_obj = MetaData()
 
-mapper_registry = orm.registry()
-Base = mapper_registry.generate_base()
-session = orm.Session(db)
+# mapper_registry = orm.registry()
+# Base = mapper_registry.generate_base()
+# session = orm.Session(db)
 LIMIT = 1000
 
 
-class Task(Base):
+class Task(db.Model):
     __tablename__ = 'tasks'
 
     id = Column(Integer, primary_key=True)
@@ -128,8 +131,8 @@ class Task(Base):
         return '',True
 
     def validate_task_date(self):
-        print(self.task_date, type(self.task_date))
-        if (not type(self.task_date) == datetime.date) or (not self.task_date <= datetime.date.today()):
+        print('***********', self.task_date)
+        if (type(self.task_date) != datetime.date and type(self.task_date) != datetime.datetime):
             return 'Task Date not valid',False
         return '',True
 
@@ -138,8 +141,8 @@ class Task(Base):
             print(k,v,type(v))
 
     
-mapper_registry.metadata.create_all(db)
-Base.metadata.create_all(db)
+# mapper_registry.metadata.create_all(db)
+# Base.metadata.create_all(db)
 
 def standardize_task(data):
     required_fields = ['route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_description', 'route_name', 'accomplishments', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date']
@@ -149,6 +152,7 @@ def standardize_task(data):
         data['bmp'] = float(data['bmp'])
         data['emp'] = float(data['emp'])
         data['route_id'] = str(data['route_id'])
+        data['crew_members'] = int(data['crew_members'])
     except:
         errors.append('BMP & EMP could not be converted into a float value.')
 
@@ -176,8 +180,8 @@ def add_task(data):
     bv,errors2 = task.validate()
     errors += errors2
     if bv and len(errors) == 0:
-        session.add(task)
-        session.commit()
+        db.session.add(task)
+        db.session.commit()
         print('\n*****Task added to database\n')
     else:
         print('\n', bv, 'Errors: ', errors, '\n')
@@ -185,7 +189,7 @@ def add_task(data):
 
 date_fields = ['task_date', 'created_date', 'updated_date', 'deleted_date']
 def update_task(data):
-    task = session.query(Task).filter_by(id=data.get('id', None)).first()
+    task = db.session.query(Task).filter_by(id=data.get('id', None)).first()
     if task is None:
         return {'status': False, 'errors':['ID for record value does not exist'], 'id':data.get('id',None)}
 
@@ -206,10 +210,10 @@ def update_task(data):
     if bv:
         # TODO task.updated_by = session['User']
         task.updated_date = datetime.datetime.now()
-        session.commit()
+        db.session.commit()
         print('\n*****Task updated\n')
     else:
-        session.rollback()
+        db.session.rollback()
         print('\n*****Update failed, rolling back to previous version of db')
         print('*****Errors: ', errors, '\n')
 
@@ -218,13 +222,13 @@ def update_task(data):
 
 
 def delete_task(id):
-    q = session.query(Task).filter(Task.id == id,Task.deleted == None).first()
+    q = db.session.query(Task).filter(Task.id == id,Task.deleted == None).first()
     errors = []
     try:
         del_data = {'deleted': True, 'deleted_date': datetime.datetime.today()}
         for k,v in del_data.items():
             setattr(q,k,v)
-        session.commit()
+        db.session.commit()
         print('\n*****Task deleted\n')
         bv = True
     except:
@@ -262,7 +266,7 @@ def apply_edits(obj):
     }
 
 def query_db(ids):
-    q = session.query(Task).filter(Task.id.in_(ids)).all()
+    q = db.session.query(Task).filter(Task.id.in_(ids)).all()
     data = {}
     try:
         for i in q:
@@ -272,27 +276,26 @@ def query_db(ids):
     return {'status':True, 'data':data}
 
 
-        
 
-dummy_data = {
-    'route_id': '20200600000EB',
-    'bmp': 19,
-    'emp': 20,
-    'org_num': '0121',
-    'project_name': 'test_project 2',
-    'activity_code': 405,
-    'activity_description': 'Bridge Structure Replacement', 
-    'route_name': 'River Rd.',
-    'accomplishments': 132,
-    'units': 'Employee Hours (EH)',
-    'crew_members': 4, 
-    'travel_hours': 11,
-    'onsite_hours': 120,
-    'task_date': '11-22-2022',
-    'notes': 'test'
-    }
+# dummy_data = {
+#     'route_id': '20200600000EB',
+#     'bmp': 19,
+#     'emp': 20,
+#     'org_num': '0121',
+#     'project_name': 'test_project 2',
+#     'activity_code': 405,
+#     'activity_description': 'Bridge Structure Replacement', 
+#     'route_name': 'River Rd.',
+#     'accomplishments': 132,
+#     'units': 'Employee Hours (EH)',
+#     'crew_members': 4, 
+#     'travel_hours': 11,
+#     'onsite_hours': 120,
+#     'task_date': '11-22-2022',
+#     'notes': 'test'
+#     }
 
-print(add_task(dummy_data))
+# print(add_task(dummy_data))
 
 # q = session.query(Task).all()
 

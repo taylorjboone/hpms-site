@@ -16,7 +16,7 @@ const Basic = () => {
 function getData(data) {
   axios({
     method: "GET",
-    url:"",
+    url:"/pm/work_plan/apply_edits",
   })
   .then((response) => {
     const res = response.data
@@ -45,9 +45,8 @@ function getData(data) {
     }
   })
 }
-
 function postData(data) {
-  data['activity_codes'] = parseInt(data['activity_codes'])
+  alert(JSON.stringify(data))
   axios({
     method: 'post',
     url: '/pm/work_plan/apply_edits',
@@ -62,7 +61,7 @@ function postData(data) {
   return <div style={{ width: "100%", overflow: 'auto'}}>
     <h1>Task Information</h1>
     <Formik
-      initialValues={{ id: '',
+      initialValues={{
                       route_id: '',
                       bmp: '',
                       emp: '',
@@ -93,10 +92,9 @@ function postData(data) {
       .required('Required'),
     activity_code: Yup.number()
       .required('Required'),
-    task_Date: Yup.date()
-      .required('Required'),
   })}
   onSubmit={(values, { setSubmitting }) => {
+      alert("DSL:FJKSDL:FJ")
       setSubmitting(true);
       postData({adds:[values]})
       setSubmitting(false)
@@ -112,6 +110,8 @@ function postData(data) {
                   return <th><label for={k} style={{width:'-webkit-fill-available'}}>{v}</label></th>
               } else if (k !== 'id') {
                   return <th><label for={k}>{v}</label></th>
+              } else {
+                return <></>
               }
               })}
             </thead>
@@ -122,12 +122,23 @@ function postData(data) {
                     return <td><Field type="" name={k} style={{width:"10.5em", textAlign:"center"}}/></td>
                 } else if (['bmp','emp','org_num'].includes(k)) {
                     return <td><Field type="" name={k} style={{width:"3em", textAlign:"center"}}/></td>
-                } else if (k == 'activity_code') {
+                } else if (k == 'activity_code'||k=="crew_members") {
                     return <td><Field type="number" name={k} style={{width:"7em", textAlign:"center"}}/></td>
                 } else if (k !== 'id') {
                     return <td><Field type="" name={k} style={{width:"95%", textAlign:"center"}}/></td>
                 } else if (k == 'task_date') {
                     return <td><Field type="date" name={k}/></td>
+                }
+              })}
+            </tr>
+
+
+            <tr>
+              {Object.keys(values).map((k)=>{
+                if (errors[k] && touched[k]) {
+                  return <ErrorMessage name={k} component="td"/>
+                } else {
+                  return <td><ErrorMessage name={k} component="td"  width='20px'/></td>
                 }
               })}
             </tr>
