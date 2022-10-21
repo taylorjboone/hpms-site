@@ -26,7 +26,7 @@ from zipfile import ZipFile
 from glob import glob
 import datetime
 from flask_sqlalchemy import SQLAlchemy
-from pm.models.kortni_db import Task, apply_edits
+from pm.models.work_plan_api import Task, apply_edits, query_tasks
 
 from flask_cors import CORS # Apparently we don't need this upon deployment
 
@@ -148,3 +148,17 @@ def login():
         else:
             return redirect(url_for('home'))
     return render_template('login_kortni.html, error = error')
+
+
+@mod.route('/pm/api/query')
+def query_tasks_route():
+    args = request.args
+    args = args.to_dict()
+    ids = args.get('ids',[])
+    if '[' in ids and ',' in ids:
+        ids = json.loads(ids)
+    print(ids)
+
+    tasks = query_tasks(ids)
+
+    return jsonify(tasks)

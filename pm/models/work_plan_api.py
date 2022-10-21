@@ -15,11 +15,12 @@ app.app_context().push()
 user_dir = os.path.expanduser('~')
 # db = create_engine(f'sqlite+pysqlite:///../../database.db', echo=True, future=True)
 
-activity_codes = pd.read_csv('../static/activity_codes.csv')
+activity_codes = pd.read_csv(f'pm/static/activity_codes.csv')
 activity_codes['Activity Code'] = activity_codes['Activity Code'].astype(int)
 
-with open('../static/org_nums.json', 'r') as f:
+with open(f'pm/static/org_nums.json', 'r') as f:
     org_nums = json.loads(f.read())
+
 
 
 # Keeping these commented in case we need to remake the table 
@@ -27,7 +28,7 @@ with open('../static/org_nums.json', 'r') as f:
 # mapper_registry = orm.registry()
 # Base = mapper_registry.generate_base()
 # session = orm.Session(db)
-# LIMIT = 1000
+LIMIT = 1000
 
 
 class Task(db.Model):
@@ -92,7 +93,6 @@ class Task(db.Model):
         return len(error_list)==0,error_list
 
 
-
     # Validates the route ID and segments given using WVDOT Utils
     def validate_geom(self):
         corrected_segs,message,bv = check_seg_valid(self.route_id, self.bmp, self.emp)
@@ -104,17 +104,20 @@ class Task(db.Model):
             return message,bv
         return message,bv
 
+    # Checks the given org number against a dictionary of orgs
     def validate_org(self):
         # TODO populate org dict
         if not self.org_num in org_nums.keys():
             return f'Org Number: {self.org_num} not recognized',False
         return '',True
 
+    # Checks the given activity code against a csv of activity codes
     def validate_activity(self):
         if not self.activity_code in activity_codes['Activity Code'].tolist():
             return f'Activity Code: {self.activity_code} not recognized',False
         return '',True
 
+    # The next few just check to make sure an answer was given
     def validate_project_name(self):
         if self.project_name == None or len(self.project_name) == 0:
             return f'Project name is empty',False
@@ -134,14 +137,14 @@ class Task(db.Model):
         if self.travel_hours == None:
             return 'Travel hours field was left blank',False
         return '',True
-    
+
     def validate_onsite_hours(self):
         if self.onsite_hours == None:
             return 'Onsite hours field was left blank',False
         return '',True
 
+    # Checks the date given to ensure it is valid
     def validate_task_date(self):
-        print('***********', self.task_date)
         if (type(self.task_date) != datetime.date and type(self.task_date) != datetime.datetime):
             return 'Task Date not valid',False
         return '',True
@@ -150,14 +153,16 @@ class Task(db.Model):
         for k,v in self.__dict__.items():
             print(k,v,type(v))
 
-    
+
 # mapper_registry.metadata.create_all(db)
 # Base.metadata.create_all(db)
 
+# Casts the given values to their respective dtypes and checks for other errors
 def standardize_task(data):
     required_fields = ['route_id', 'bmp', 'emp', 'org_num', 'project_name', 'activity_description', 'route_name', 'accomplishments', 'crew_members', 'travel_hours', 'onsite_hours', 'task_date']
     errors = []
 
+    # Type casting the entered data
     try:
         data['bmp'] = float(data['bmp'])
         data['emp'] = float(data['emp'])
@@ -166,49 +171,59 @@ def standardize_task(data):
     except:
         errors.append('BMP & EMP could not be converted into a float value.')
 
+    # This is currently useless since defaults for each field are set to ''
     for i in required_fields:
-        if not i in data.keys():
-            errors.append(f'No required field {i} given in dictionary object')
+        if data[i] == '':
+            errors.append(f'No required field {i} given in dictionary object. ')
 
+
+    # If there were no errors, creates a new instance of Task()
     if len(errors) == 0:
         task = Task()
+        # And sets the values from data to the attributes of the Task() instance
         for k,v in data.items():
             setattr(task, k, v)
+        # Double checks to ensure the given date is valid
         try: 
             task.task_date = parser.parse(data['task_date']) if type(data.get('task_date','')) == str else ''
         except:
-            print(task.task_date, 'invalid date')
+            errors.append(f'Date: {task.task_date} is not a valid date. ')
+        # Fills the created field for the record in the db
         task.created_date = datetime.datetime.now()
         return task,errors
+    # If there were errors..
     else:
         return None,errors
 
 
-
+# Runs data through standardize function, validates answers, and commits data to db
 def add_task(data):
     task,errors = standardize_task(data)
     bv,errors2 = task.validate()
     errors += errors2
     if bv and len(errors) == 0:
+        # We had to switch to using flask_sqlalchemy so db is imported from the __init__ in /pm/
         db.session.add(task)
         db.session.commit()
-        print('\n*****Task added to database\n')
     else:
         print('\n', bv, 'Errors: ', errors, '\n')
+    # Returns status as a bool with any errors and the db id for the task
     return {'status': bv and len(errors) == 0, 'errors':errors, 'id':task.id}
 
 date_fields = ['task_date', 'created_date', 'updated_date', 'deleted_date']
 def update_task(data):
+    # Queries the existing record to be updated
     task = db.session.query(Task).filter_by(id=data.get('id', None)).first()
     if task is None:
+        # Return given if the id given doesn't exist on the db
         return {'status': False, 'errors':['ID for record value does not exist'], 'id':data.get('id',None)}
 
+    # Iterates through the date fields and checks if they are valid
     for k,v in data.items():
         if k in date_fields:
             boolval = False
             try:
                 v = parser.parse(v) if type(v) == str else ''
-                print('\nDate parsed properly\n')
                 boolval = True
             except:
                 pass
@@ -221,7 +236,6 @@ def update_task(data):
         # TODO task.updated_by = session['User']
         task.updated_date = datetime.datetime.now()
         db.session.commit()
-        print('\n*****Task updated\n')
     else:
         db.session.rollback()
         print('\n*****Update failed, rolling back to previous version of db')
@@ -275,14 +289,27 @@ def apply_edits(obj):
         'updateResults':update_results,
     }
 
-def query_db(ids):
+
+def _f(i): 
+    i = i.__dict__
+    del i['_sa_instance_state']
+    return i
+
+
+def query_tasks(ids):
     q = db.session.query(Task).filter(Task.id.in_(ids)).all()
     data = {}
-    try:
-        for i in q:
-            data[i.id] = {i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes}
-    except:
-        return {'status':False, 'data':data}
+    for i in q:
+        id = i.id
+        i = _f(i)
+        data[id] = i 
+
+    # try:
+    #     for i in q:
+    #         # data[i.id] = {i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes}
+    #         val = i.__dict__
+    # except:
+    #     return {'status':False, 'data':data}
     return {'status':True, 'data':data}
 
 

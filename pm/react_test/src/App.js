@@ -46,7 +46,6 @@ function getData(data) {
   })
 }
 function postData(data) {
-  alert(JSON.stringify(data))
   axios({
     method: 'post',
     url: '/pm/work_plan/apply_edits',
@@ -94,7 +93,6 @@ function postData(data) {
       .required('Required'),
   })}
   onSubmit={(values, { setSubmitting }) => {
-      alert("DSL:FJKSDL:FJ")
       setSubmitting(true);
       postData({adds:[values]})
       setSubmitting(false)
@@ -115,6 +113,17 @@ function postData(data) {
               }
               })}
             </thead>
+            
+            <tr>
+              {Object.keys(values).map((k)=>{
+                if (errors[k] && touched[k]) {
+                  return <ErrorMessage name={k} component="td" style={{fontSize:'10px', color:'red'}}/>
+                } else {
+                  return <td font-size="10px"><ErrorMessage name={k} component="td"/></td>
+                }
+              })}
+            </tr>
+
             <tr>
               {Object.keys(values).map((k)=>{
                 var v = values[k]
@@ -132,16 +141,6 @@ function postData(data) {
               })}
             </tr>
 
-
-            <tr>
-              {Object.keys(values).map((k)=>{
-                if (errors[k] && touched[k]) {
-                  return <ErrorMessage name={k} component="td"/>
-                } else {
-                  return <td><ErrorMessage name={k} component="td"  width='20px'/></td>
-                }
-              })}
-            </tr>
           </table>
           
           <Button type='submit' variant='contained' disabled={isSubmitting} style={{'margin': '1% 0 0 95%'}} size='small'>

@@ -14,6 +14,11 @@ from zipfile import ZipFile
 from glob import glob
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from datetime import timedelta
+
+SECRET_KEY = 'secret key'
+PERMANENT_SESSION_LIFETIME=  timedelta(minutes=600)
+
 
 # cwd = os.getcwd()
 # sys.path.insert(0, cwd + '/services')
@@ -23,6 +28,7 @@ from . import utils, rptconverter as rpt, geo_counts as gc
 
 app = Flask(__name__, static_url_path='/pm/static')
 app.debug = True
+app.secret_key = 'secret key'
 
 # Load configuration
 app.config.from_object('config.BaseConfig')
