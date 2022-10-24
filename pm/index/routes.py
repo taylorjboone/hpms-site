@@ -43,6 +43,9 @@ ALLOWED_EXTENSIONS = ['RPT']
 
 user_dir = os.path.expanduser('~')
 
+users = {'District1':'District1', 'District2':'District2', 'District3':'District3', 'District4':'District4', 'District5':'District5', 'District6':'District6', 'District7':'District7', 'District8':'District8', 'District9':'District9', 'District10':'District10'}
+
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -110,28 +113,11 @@ def geo_counts_convert():
 
 @mod.route('/pm/work_plan', methods=['GET', 'POST'])
 def work_plan():
-    return send_from_directory('react_test/build', 'index.html')
+    if session.get('user', False):
+        return send_from_directory('react_test/build', 'index.html')
+    else:
+        return redirect(url_for('index.login'))
 
-    # worksheet = pd.read_csv(f'{user_dir}/Documents/GitHub/hpms-site/pm/static/activity_codes.csv')
-    # activity_dict = {}
-    # today = datetime.date.today().strftime('%Y-%m-%d')
-    # for i in range(1, len(worksheet)):
-    #     row = worksheet.iloc[i]
-    #     activity_dict[row[0]] = [row[1],row[2]]
-
-    # if request.method == 'POST':
-    #     activity = request.form.get('activity')
-    #     activity = {activity: activity_dict.get(int(activity))}
-    #     date = request.form.get('task_date')
-    #     dates = {'today':today, 'task_date':date}
-    #     print(dates)                
-       
-    #     return render_template('kortni2.html', activity_dict=activity_dict, activity=activity, dates=dates)
-
-    # print(activity_dict)
-    # dates = {'today':today}
-
-    # return render_template('kortni.html',activity_dict=activity_dict, dates=dates)
 
 @mod.route('/pm/work_plan/apply_edits', methods=['POST'])
 def work_plan_api():
@@ -139,15 +125,17 @@ def work_plan_api():
     return jsonify(apply_edits(edits))
 
 
-@mod.route('/login', methods = ['GET', 'POST'])
+@mod.route('/pm/login', methods = ['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again'
+        if users.get(request.form['username'], False) and (request.form['password'] == users.get(request.form['username'], False)):
+            session['user'] = request.form['username']
+            session['login'] = datetime.datetime.now()
+            return redirect(url_for('index.work_plan'))
         else:
-            return redirect(url_for('home'))
-    return render_template('login_kortni.html, error = error')
+            error = 'Invalid Credentials. Please try again'
+    return render_template('work_plan_login.html', error = error)
 
 
 @mod.route('/pm/api/query')

@@ -8,55 +8,54 @@ import axios from 'axios';
 import { activityCodes, labelMap, orgNums } from './consts';
 
 
-
 const Basic = () => {
 
   const [taskData, setTaskData] = useState(null)
 
-function getData(data) {
-  axios({
-    method: "GET",
-    url:"/pm/work_plan/apply_edits",
-  })
-  .then((response) => {
-    const res = response.data
-    setTaskData(({
-      id: res.id,
-      route_id: res.route_id,
-      bmp: res.bmp,
-      emp: res.emp,
-      org_num: res.org_num,
-      project_name: res.project_name,
-      activity_code: res.activity_code,
-      activity_description: res.activity_description,
-      route_name: res.route_name,
-      accomplishments: res.accomplishments,
-      units: res.units,
-      crew_members: res.crew_members,
-      travel_hours: res.travel_hours,
-      onsite_hours: res.onsite_hours,
-      task_date: res.task_date,
-      notes: res.notes}))
-  }).catch((error) => {
-    if (error.response) {
-      console.log(error.response)
-      console.log(error.response.status)
-      console.log(error.response.headers)
-    }
-  })
-}
-function postData(data) {
-  axios({
-    method: 'post',
-    url: '/pm/work_plan/apply_edits',
-    data: data
-  })
-  .then(function (response) {
-    console.log(response);
-  }).catch(function (error) {
-    console.log(error);
-  })
-}
+  function getData(data) {
+    axios({
+      method: "GET",
+      url:"/pm/work_plan/apply_edits",
+    })
+    .then((response) => {
+      const res = response.data
+      setTaskData(({
+        id: res.id,
+        route_id: res.route_id,
+        bmp: res.bmp,
+        emp: res.emp,
+        org_num: res.org_num,
+        project_name: res.project_name,
+        activity_code: res.activity_code,
+        activity_description: res.activity_description,
+        route_name: res.route_name,
+        accomplishments: res.accomplishments,
+        units: res.units,
+        crew_members: res.crew_members,
+        travel_hours: res.travel_hours,
+        onsite_hours: res.onsite_hours,
+        task_date: res.task_date,
+        notes: res.notes}))
+    }).catch((error) => {
+      if (error.response) {
+        console.log(error.response)
+        console.log(error.response.status)
+        console.log(error.response.headers)
+      }
+    })
+  }
+  function postData(data) {
+    axios({
+      method: 'post',
+      url: '/pm/work_plan/apply_edits',
+      data: data
+    })
+    .then(function (response) {
+      console.log(response);
+    }).catch(function (error) {
+      console.log(error);
+    })
+  }
   return <div style={{ width: "100%", overflow: 'auto'}}>
     <h1>Task Information</h1>
     <Formik
@@ -113,11 +112,11 @@ function postData(data) {
               }
               })}
             </thead>
-            
+
             <tr>
               {Object.keys(values).map((k)=>{
                 if (errors[k] && touched[k]) {
-                  return <ErrorMessage name={k} component="td" style={{fontSize:'10px', color:'red'}}/>
+                  return <ErrorMessage name={k} component="td" style={{fontSize:'10px', color:'red', textAlign:'center'}}/>
                 } else {
                   return <td font-size="10px"><ErrorMessage name={k} component="td"/></td>
                 }
@@ -133,18 +132,17 @@ function postData(data) {
                     return <td><Field type="" name={k} style={{width:"3em", textAlign:"center"}}/></td>
                 } else if (k == 'activity_code'||k=="crew_members") {
                     return <td><Field type="number" name={k} style={{width:"7em", textAlign:"center"}}/></td>
-                } else if (k !== 'id') {
-                    return <td><Field type="" name={k} style={{width:"95%", textAlign:"center"}}/></td>
                 } else if (k == 'task_date') {
                     return <td><Field type="date" name={k}/></td>
+                } else if (k !== 'id') {
+                  return <td><Field type="" name={k} style={{width:"95%", textAlign:"center"}}/></td>
                 }
               })}
             </tr>
-
           </table>
-          
+
           <Button type='submit' variant='contained' disabled={isSubmitting} style={{'margin': '1% 0 0 95%'}} size='small'>
-            Submit
+            Add Task
           </Button>
 
         </Form>
