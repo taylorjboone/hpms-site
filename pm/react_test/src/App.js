@@ -104,24 +104,14 @@ const Basic = () => {
               {Object.keys(values).map((k)=>{
               var v = labelMap[k];
               if (k == 'activity_code') {
-                  return <th><label for={k} style={{width:'-webkit-fill-available'}}>{v}</label></th>
+                  return <th><label for={k} style={{width:'-webkit-fill-available', fontSize:'.9em'}}>{v}</label></th>
               } else if (k !== 'id') {
-                  return <th><label for={k}>{v}</label></th>
+                  return <th><label for={k} style={{fontSize:'.9em'}}>{v}</label></th>
               } else {
                 return <></>
               }
               })}
             </thead>
-
-            <tr>
-              {Object.keys(values).map((k)=>{
-                if (errors[k] && touched[k]) {
-                  return <ErrorMessage name={k} component="td" style={{fontSize:'10px', color:'red', textAlign:'center'}}/>
-                } else {
-                  return <td font-size="10px"><ErrorMessage name={k} component="td"/></td>
-                }
-              })}
-            </tr>
 
             <tr>
               {Object.keys(values).map((k)=>{
@@ -135,13 +125,23 @@ const Basic = () => {
                 } else if (k == 'task_date') {
                     return <td><Field type="date" name={k}/></td>
                 } else if (k !== 'id') {
-                  return <td><Field type="" name={k} style={{width:"95%", textAlign:"center"}}/></td>
+                  return <td><Field type="" name={k} style={{width:"90%", textAlign:"center"}}/></td>
+                }
+              })}
+            </tr>
+
+            <tr>
+              {Object.keys(values).map((k)=>{
+                if (errors[k] && touched[k]) {
+                  return <ErrorMessage name={k} component="td" style={{fontSize:'.5em', color:'red', textAlign:'center'}}/>
+                } else {
+                  return <td font-size="10px"><ErrorMessage name={k} component="td"/></td>
                 }
               })}
             </tr>
           </table>
 
-          <Button type='submit' variant='contained' disabled={isSubmitting} style={{'margin': '1% 0 0 95%'}} size='small'>
+          <Button type='submit' variant='contained' disabled={isSubmitting} style={{'margin': '1% 0 0 94%'}} size='small'>
             Add Task
           </Button>
 

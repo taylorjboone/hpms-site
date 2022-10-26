@@ -341,6 +341,6 @@ def query_tasks(ids):
 # for i in q:
 #     print(i.id, i.route_id, i.bmp, i.emp, i.org_num, i.project_name, i.activity_code, i.activity_description, i.route_name, i.accomplishments, i.units, i.crew_members, i.travel_hours, i.onsite_hours, i.task_date, i.notes, i.created_by, i.created_date, i.updated_by, i.updated_date, i.deleted, i.deleted_by, i.deleted_date)
 
-q = query_tasks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30])
-for k,v in q['data'].items():
-    print(str(k)+':', v)
+# q = query_tasks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30])
+# for k,v in q['data'].items():
+#     print(str(k)+':', v)
